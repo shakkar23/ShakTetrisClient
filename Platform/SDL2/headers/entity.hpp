@@ -1,17 +1,27 @@
+//not my code, but modified by me
 #pragma once
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "RenderWindow.hpp"
+#include<utility>
+#include<iostream>
 
-class Entity {
+class autoTexture {
 public:
-  Entity(float p_x, float p_y, SDL_Texture *p_tex);
-  float getX();
-  float getY();
+	autoTexture();
+  ~autoTexture();
+
+  void Init(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window);
+  int getXpos();
+  int getYpos();
   SDL_Texture *getTex();
   SDL_Rect getCurrentFrame();
-
+  
 private:
-  float x, y;
-  SDL_Rect currentFrame;
-  SDL_Texture *tex;
+  int x{}, y{};
+
+  SDL_Rect currentFrame{};
+  SDL_Texture* tex{};
+  void loadTexture(const char* p_filePath, RenderWindow window);
 };

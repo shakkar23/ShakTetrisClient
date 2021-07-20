@@ -3,6 +3,7 @@ set(PLATFORM_SOURCES
 	"${SRC}/Platform/SDL2/Game.cpp"
 	"${SRC}/Platform/SDL2/RenderWindow.cpp"
 	"${SRC}/Platform/SDL2/entity.cpp"
+	"${SRC}/Platform/SDL2/Keyboard/Keyboard.cpp"
 )
 option(USE_ORIGINAL_MENU "Use original game's menu (\"Test Mode\")" OFF)
 	list(APPEND PLATFORM_SOURCES "${SRC}/Platform/SDL2/Game.cpp")
@@ -10,6 +11,7 @@ option(USE_ORIGINAL_MENU "Use original game's menu (\"Test Mode\")" OFF)
 set(PLATFORM_HEADERS 
 	"${SRC}/Platform/SDL2/headers/RenderWindow.hpp"
 	"${SRC}/Platform/SDL2/headers/entity.hpp"
+	"${SRC}/Platform/SDL2/Keyboard/Keyboard.hpp"
 	)
 
 set(ICON_DIR "${CMAKE_SOURCE_DIR}/Asset/Icon")
