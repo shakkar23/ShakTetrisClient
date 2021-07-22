@@ -4,7 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include "entity.hpp"
 
-extern class autoTexture;
+class autoTexture;
 
 class RenderWindow {
 public:

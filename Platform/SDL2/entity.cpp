@@ -5,8 +5,17 @@
 #include <iostream>
 
 autoTexture::autoTexture() {}
+autoTexture::autoTexture(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window): x(pos_x), y(pos_y) {
+    this->currentFrame.x = pos_x;
+    this->currentFrame.y = pos_y;
+    this->currentFrame.w = size_x;
+    this->currentFrame.h = size_y;
+    this->loadTexture(filepath, window);
+}
+
 void autoTexture::Init(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window)
 {
+    if (tex != nullptr) return;
     x=pos_x; y=pos_y;
     this->currentFrame.x = pos_x;
     this->currentFrame.y = pos_y;
@@ -15,8 +24,20 @@ void autoTexture::Init(int pos_x, int pos_y, const char* filepath, int size_x, i
     this->loadTexture(filepath, window);
 
 }
+
+void autoTexture::unInit(){
+    if (tex == nullptr) return;
+    x = 0; y = 0;
+    this->currentFrame.x = 0;
+    this->currentFrame.y = 0;
+    this->currentFrame.w = 0;
+    this->currentFrame.h = 0;
+    SDL_DestroyTexture(tex);
+    tex = nullptr;
+}
 autoTexture::~autoTexture() {
     std::cout << "this shouldnt happen" << std::endl;
+    if (tex == nullptr) return;
     SDL_DestroyTexture(tex);
 }
 
