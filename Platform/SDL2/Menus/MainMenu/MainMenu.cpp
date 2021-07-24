@@ -2,9 +2,9 @@
 
 void mainMenuGUI::Init(RenderWindow window) {
 	if (!isInitialized) {
-		invertedShak.Init(0, 0, "Asset/Sprites/invertedshak.png", 480, 360, window);
-		blankMenu.Init(0, 0, "Asset/Sprites/blankmenu.png", 480, 360, window);
-		highlightedMenu.Init(0, 0, "Asset/Sprites/highlightedmenu.png", 480, 360, window);
+		invertedShak.Init("Asset/Sprites/invertedshak.png", window);
+		blankMenu.Init("Asset/Sprites/blankmenu.png", window);
+		highlightedMenu.Init("Asset/Sprites/highlightedmenu.png", window);
 	}
 	return;
 }

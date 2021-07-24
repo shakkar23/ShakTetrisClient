@@ -5,22 +5,13 @@
 #include <iostream>
 
 autoTexture::autoTexture() {}
-autoTexture::autoTexture(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window): x(pos_x), y(pos_y) {
-    this->sprite.x = pos_x;
-    this->sprite.y = pos_y;
-    this->sprite.w = size_x;
-    this->sprite.h = size_y;
+autoTexture::autoTexture(const char* filepath, RenderWindow window) {
     this->loadTexture(filepath, window);
 }
 
-void autoTexture::Init(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window)
+void autoTexture::Init(const char* filepath, RenderWindow window)
 {
     if (tex != nullptr) return;
-    textureRegion.x=pos_x; textureRegion.y=pos_y;
-    this->sprite.x = pos_x;
-    this->sprite.y = pos_y;
-    this->sprite.w = size_x;
-    this->sprite.h = size_y;
     this->loadTexture(filepath, window);
 
 }
@@ -39,13 +30,11 @@ void autoTexture::unInit(){
     tex = nullptr;
 }
 autoTexture::~autoTexture() {
-    std::cout << "this shouldnt happen" << std::endl;
+    // std::cout << "this shouldnt happen" << std::endl;
     if (tex == nullptr) return;
     SDL_DestroyTexture(tex);
 }
 
-int autoTexture::getXpos() { return x; }
-int autoTexture::getYpos() { return y; }
 
 SDL_Texture *autoTexture::getTex() { return tex; }
 

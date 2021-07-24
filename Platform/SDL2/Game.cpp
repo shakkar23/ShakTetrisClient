@@ -16,16 +16,18 @@ int main(int argc, char *args[]) {
 
   RenderWindow window("Shaktris", 480, 360); // tiny window, will be full screenable later hopefully
   std::cout << window.getRefreshrate() << std::endl;
-  autoTexture invertedShak(0, 0, "Asset/Sprites/invertedshak.png", 480, 360, window);
+  autoTexture invertedShak("Asset/Sprites/invertedshak.png", window);
   //SDL_Texture *invertedshak     = window.loadTexture("Asset/Sprites/invertedshak.png");
-  autoTexture blankMenu(0, 0, "Asset/Sprites/blankmenu.png", 480, 360, window);
-  autoTexture highlightedMenu(0, 0, "Asset/Sprites/highlightedmenu.png", 480, 360, window);
+  autoTexture blankMenu("Asset/Sprites/blankmenu.png", window);
+  autoTexture highlightedMenu("Asset/Sprites/highlightedmenu.png", window);
 
   bool gameRunning = true;
   SDL_Event event;
-
-  std::vector<autoTexture> entitiees;// (std::move(invertedShak), std::move(blankMenu));
-  entitiees.emplace_back(std::move(invertedShak));
+  invertedShak.textureRegion = {0,0,480,272};
+  invertedShak.sprite = {0,0,480,272};
+  std::vector<autoTexture *> entitiees = {(&invertedShak)};// (std::move(invertedShak), std::move(blankMenu));
+  //entitiees.emplace_back(&invertedShak);
+  
   //everything above this is for initializing the game, and its assets, please dont initialize everything the game uses at once
 
   
@@ -57,8 +59,8 @@ int main(int argc, char *args[]) {
 
 
     window.clear();
-    for (autoTexture &e : entitiees) {
-      window.render(e);
+    for (autoTexture *e : entitiees) {
+      window.render(*e);
     }
     window.display();
   }
