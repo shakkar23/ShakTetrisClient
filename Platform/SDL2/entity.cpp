@@ -6,32 +6,35 @@
 
 autoTexture::autoTexture() {}
 autoTexture::autoTexture(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window): x(pos_x), y(pos_y) {
-    this->currentFrame.x = pos_x;
-    this->currentFrame.y = pos_y;
-    this->currentFrame.w = size_x;
-    this->currentFrame.h = size_y;
+    this->sprite.x = pos_x;
+    this->sprite.y = pos_y;
+    this->sprite.w = size_x;
+    this->sprite.h = size_y;
     this->loadTexture(filepath, window);
 }
 
 void autoTexture::Init(int pos_x, int pos_y, const char* filepath, int size_x, int size_y, RenderWindow window)
 {
     if (tex != nullptr) return;
-    x=pos_x; y=pos_y;
-    this->currentFrame.x = pos_x;
-    this->currentFrame.y = pos_y;
-    this->currentFrame.w = size_x;
-    this->currentFrame.h = size_y;
+    textureRegion.x=pos_x; textureRegion.y=pos_y;
+    this->sprite.x = pos_x;
+    this->sprite.y = pos_y;
+    this->sprite.w = size_x;
+    this->sprite.h = size_y;
     this->loadTexture(filepath, window);
 
 }
 
 void autoTexture::unInit(){
     if (tex == nullptr) return;
-    x = 0; y = 0;
-    this->currentFrame.x = 0;
-    this->currentFrame.y = 0;
-    this->currentFrame.w = 0;
-    this->currentFrame.h = 0;
+    this->sprite.x = 0;
+    this->sprite.y = 0;
+    this->sprite.w = 0;
+    this->sprite.h = 0;
+    this->textureRegion.x = 0;
+    this->textureRegion.y = 0;
+    this->textureRegion.w = 0;
+    this->textureRegion.h = 0;
     SDL_DestroyTexture(tex);
     tex = nullptr;
 }
@@ -46,7 +49,8 @@ int autoTexture::getYpos() { return y; }
 
 SDL_Texture *autoTexture::getTex() { return tex; }
 
-SDL_Rect autoTexture::getCurrentFrame() { return currentFrame; }
+SDL_Rect autoTexture::getSprite() { return sprite; }
+SDL_Rect autoTexture::getTextureRegion() { return textureRegion; }
 
 void autoTexture::loadTexture(const char* p_filePath, RenderWindow window) {
     

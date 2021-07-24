@@ -20,19 +20,20 @@ public:
   int getXpos();
   int getYpos();
   SDL_Texture *getTex();
-  SDL_Rect getCurrentFrame(); 
+  SDL_Rect getTextureRegion();
+  SDL_Rect getSprite(); 
   autoTexture(const autoTexture& other) = delete;               // Copy constructor
   autoTexture& operator=(const autoTexture& other) {};  // Copy assignment operator
-  autoTexture(autoTexture&& other) noexcept : x(other.x), y(other.y), currentFrame(other.currentFrame) { 
-	  other.x = 0; other.y = 0; other.currentFrame = {0,0,0,0};
+  autoTexture(autoTexture&& other) noexcept : sprite(other.sprite), textureRegion(other.textureRegion){
+	  other.x = 0; other.y = 0; other.sprite = { 0,0,0,0 }; other.textureRegion = { 0,0,0,0 };
 	  std::swap(this->tex, other.tex); 
 
   }// move constructor
   autoTexture& operator=(autoTexture&& other) noexcept {}
 private:
-  int x{}, y{};
+  SDL_Rect textureRegion{};
+  SDL_Rect sprite{};
 
-  SDL_Rect currentFrame{};
   SDL_Texture* tex{};
   void loadTexture(const char* p_filePath, RenderWindow window);
 };

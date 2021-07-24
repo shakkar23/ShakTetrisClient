@@ -36,16 +36,16 @@ void RenderWindow::clear() { SDL_RenderClear(renderer); }
 
 void RenderWindow::render(autoTexture& p_entity) {
   SDL_Rect src;
-  src.x = p_entity.getCurrentFrame().x;
-  src.y = p_entity.getCurrentFrame().y;
-  src.w = p_entity.getCurrentFrame().w;
-  src.h = p_entity.getCurrentFrame().h;
+  src.x = p_entity.getSprite().x;
+  src.y = p_entity.getSprite().y;
+  src.w = p_entity.getSprite().w;
+  src.h = p_entity.getSprite().h;
 
   SDL_Rect dst;
   dst.x = p_entity.getXpos();
   dst.y = p_entity.getYpos();
-  dst.w = p_entity.getCurrentFrame().w;
-  dst.h = p_entity.getCurrentFrame().h;
+  dst.w = p_entity.getSprite().w;
+  dst.h = p_entity.getSprite().h;
   int error = SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
   if (error != 0)
       std::cout << "wtf" << std::endl << SDL_GetError() << std::endl;
