@@ -25,8 +25,7 @@ int main(int argc, char *args[]) {
   SDL_Event event;
   invertedShak.textureRegion = {0,0,480,272};
   invertedShak.sprite = {0,0,480,272};
-  std::vector<autoTexture *> entitiees = {(&invertedShak)};// (std::move(invertedShak), std::move(blankMenu));
-  //entitiees.emplace_back(&invertedShak);
+  std::vector<autoTexture *> entitiees = {(&invertedShak)};
   
   //everything above this is for initializing the game, and its assets, please dont initialize everything the game uses at once
 

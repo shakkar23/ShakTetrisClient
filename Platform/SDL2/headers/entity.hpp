@@ -24,8 +24,7 @@ public:
   autoTexture& operator=(const autoTexture& other) {};  // Copy assignment operator
   autoTexture(autoTexture&& other) noexcept : sprite(other.sprite), textureRegion(other.textureRegion){
 	  other.sprite = {0,0,0,0}; other.textureRegion = {0,0,0,0};
-	  std::swap(this->tex, other.tex); 
-
+	  std::swap(this->tex, other.tex);
   }// move constructor
   autoTexture& operator=(autoTexture&& other) noexcept {}
   SDL_Rect textureRegion{};

@@ -30,7 +30,7 @@ void autoTexture::unInit(){
     tex = nullptr;
 }
 autoTexture::~autoTexture() {
-    // std::cout << "this shouldnt happen" << std::endl;
+    std::cout << "this shouldnt happen" << std::endl;
     if (tex == nullptr) return;
     SDL_DestroyTexture(tex);
 }
