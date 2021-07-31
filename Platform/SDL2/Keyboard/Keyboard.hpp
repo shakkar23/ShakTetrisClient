@@ -5,7 +5,7 @@
 #include "ShakTris/Input/Input.hpp"
 namespace Shakkar {
 	namespace Keyboard {
-		void pressKey(SDL_Scancode scan);
-		void unpressKey(SDL_Scancode scan);
+		void pressKey(SDL_Scancode scan, Shakkar::inputBitmap &input);
+		void unpressKey(SDL_Scancode scan, Shakkar::inputBitmap &input);
 	}
 }
