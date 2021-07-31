@@ -48,6 +48,30 @@ namespace Shakkar {
                 input.setSoftDrop();
             }
 
+            if (scan == SDL_Scancode::SDL_SCANCODE_UP)
+            {
+                input.setMenuUp();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_LEFT)
+            {
+                input.setMenuLeft();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_RIGHT)
+            {
+                input.setMenuRight();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_DOWN)
+            {
+                input.setMenuDown();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_RETURN)
+            {
+                input.setMenuSelect();
+            }
             
         }
         void unpressKey( SDL_Scancode scan) {
@@ -56,7 +80,7 @@ namespace Shakkar {
                 input.unsetLeft();
             }
 
-            if (scan == SDL_Scancode::SDL_SCANCODE_A)
+            if (scan == SDL_Scancode::SDL_SCANCODE_D)
             {
                 input.unsetRight();
             }
@@ -90,6 +114,32 @@ namespace Shakkar {
             {
                 input.unsetSoftDrop();
             }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_UP)
+            {
+                input.unsetMenuUp();
+            }
+            
+            if (scan == SDL_Scancode::SDL_SCANCODE_LEFT)
+            {
+                input.unsetMenuLeft();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_RIGHT)
+            {
+                input.unsetMenuRight();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_DOWN)
+            {
+                input.unsetMenuDown();
+            }
+
+            if (scan == SDL_Scancode::SDL_SCANCODE_RETURN)
+            {
+                input.unsetMenuSelect();
+            }
+
 
         }
     }

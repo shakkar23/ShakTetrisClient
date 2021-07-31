@@ -2,9 +2,11 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <vector>
+
 #include "entity.hpp"
 
-class autoTexture;
+class autoTexture; //cpp bullshit
 
 class RenderWindow {
 public:
@@ -16,6 +18,9 @@ public:
   void clear();
   void render(autoTexture &p_entity);
   void display(); 
+  void getWindowSize(int& x, int&y);
+  void setWindowSize(int x, int y);
+  void renderFrame(std::vector<autoTexture *> & entities);
 
 private:
   SDL_Window *window;

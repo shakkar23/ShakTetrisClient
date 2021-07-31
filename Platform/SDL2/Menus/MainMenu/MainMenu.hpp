@@ -2,10 +2,14 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include"Platform/SDL2/Menus/Menus.hpp"
 
+#include "Platform/SDL2/headers/entity.hpp"
+#include "ShakTris/Input/Input.hpp"
+#include "Platform/SDL2/Menus/Menus.hpp"
 
-class mainMenuGUI
+#include <vector>
+
+class mainMenuGUI : public menuGUI
 {
 public:
 	mainMenuGUI()
@@ -19,11 +23,12 @@ public:
 	{
 	}
 
-	void Init(RenderWindow window);
-
-private:
-	friend gameManager;
+	void menuGUI::Init(RenderWindow &window);
+	void menuGUI::menuLogic(Shakkar::inputBitmap input);
 	bool isInitialized = false;
-}mainMenuGUI;
+private:
+	uint_fast8_t selected{};
+	const int numberOfOptions = 4;
+};
 
 

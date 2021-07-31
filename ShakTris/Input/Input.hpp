@@ -6,7 +6,7 @@ namespace Shakkar {
 
     class inputBitmap
     {
-    private:
+    public:
         bool left       : 1;
         bool right      : 1;
         bool rotRight   : 1;
@@ -15,7 +15,12 @@ namespace Shakkar {
         bool hold       : 1;
         bool hardDrop   : 1;
         bool softDrop   : 1;
-    public:
+        bool menuUp     : 1;
+        bool menuDown   : 1;
+        bool menuLeft   : 1;
+        bool menuRight  : 1;
+        bool menuSelect : 1;
+
         inputBitmap();
 
         void setLeft();
@@ -26,7 +31,12 @@ namespace Shakkar {
         void setHold();
         void setHardDrop();
         void setSoftDrop();
-    
+        void setMenuUp();
+        void setMenuDown();
+        void setMenuLeft();
+        void setMenuRight();
+        void setMenuSelect();
+
         void unsetLeft();
         void unsetRight();
         void unsetRotRight();
@@ -35,7 +45,13 @@ namespace Shakkar {
         void unsetHold();
         void unsetHardDrop();
         void unsetSoftDrop();
+        void unsetMenuUp();
+        void unsetMenuDown();
+        void unsetMenuLeft();
+        void unsetMenuRight();
+        void unsetMenuSelect();
 
+    private:
     };
     extern inputBitmap input;
 };
