@@ -15,7 +15,6 @@
 #define DEFAULT_SCREEN_HEIGHT 1920
 #define μs std::chrono::microseconds
 
-std::atomic<uint64_t> times_frame_showed = 0;
 
 int main(int argc, char* args[]) {
     if (SDL_Init(SDL_INIT_VIDEO) > 0)
@@ -30,7 +29,6 @@ int main(int argc, char* args[]) {
     GameManager.Init(window);
     Shakkar::inputBitmap input;
     Shakkar::inputBitmap prevInput;
-    std::cout << window.getRefreshrate() << std::endl;
 
     bool gameRunning = true;
     SDL_Event event;
@@ -81,8 +79,9 @@ int main(int argc, char* args[]) {
             //window.renderFrame();
             constexpr int FRAME_RATE = ((1.0 / 60.0) * 1000); // time spent in a frame in ms
             constexpr int FRAME_RATE2 = ((1.0 / 60.0) * 1000.0 * 1000.0); // time spent in a frame in microseconds
-            const int denominator = 10; // SDL_GetPerformanceCounter is 10x smaller than microseconds, so this is needed to divide later
+            const int denominator = SDL_GetPerformanceFrequency() / 1000 / 1000; // SDL_GetPerformanceCounter is 10x smaller than microseconds, so this is needed to divide later
             constexpr bool highPerformanceMode = true;
+
             if (highPerformanceMode) {
                 Uint64 ticks = SDL_GetPerformanceCounter();
                                 

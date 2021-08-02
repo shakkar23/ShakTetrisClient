@@ -17,8 +17,8 @@ public:
 	{
 	}
 	autoTexture background; 
-	autoTexture settingsButton; 
 	autoTexture playButton;
+	autoTexture settingsButton; 
 	autoTexture exitButton;
 
 	~mainMenuGUI()
