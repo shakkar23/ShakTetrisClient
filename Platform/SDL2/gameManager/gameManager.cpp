@@ -4,7 +4,7 @@ void gameManager::Init(RenderWindow& window) { if (!mainMenu->isInitialized) mai
 void gameManager::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
     mainMenu->menuLogic(input, prevInput);
 }
-void gameManager::render(RenderWindow window) {
+void gameManager::render(RenderWindow &window) {
     mainMenu->render(window);
     window.display();
 }

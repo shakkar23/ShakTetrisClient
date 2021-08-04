@@ -14,6 +14,7 @@ option(USE_ORIGINAL_MENU "Use original game's menu (\"Test Mode\")" OFF)
 	list(APPEND PLATFORM_SOURCES "${SRC}/Platform/SDL2/Game.cpp")
 
 set(PLATFORM_HEADERS 
+	"${SRC}/Platform/SDL2/headers/Game.hpp"
 	"${SRC}/Platform/SDL2/headers/RenderWindow.hpp"
 	"${SRC}/Platform/SDL2/headers/entity.hpp"
 	"${SRC}/Platform/SDL2/Keyboard/Keyboard.hpp"

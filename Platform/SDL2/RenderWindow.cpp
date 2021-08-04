@@ -17,7 +17,7 @@ RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
   }
 
   renderer = SDL_CreateRenderer(
-      window, -1, SDL_RENDERER_ACCELERATED);
+      window, -1, SDL_RENDERER_ACCELERATED | SDL_RendererFlags::SDL_RENDERER_PRESENTVSYNC);
   SDL_RenderSetLogicalSize(this->renderer, 1920 , 1080);  
 
 

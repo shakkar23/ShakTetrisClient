@@ -7,10 +7,10 @@
 class gameManager : public menuGUI
 {
 public:
-	mainMenuGUI* mainMenu;
+	menuGUI* mainMenu;
 	void Init(RenderWindow& window);
 	void menuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow window);
+	void render(RenderWindow &window);
 
 	gameManager() : mainMenu(nullptr)
 	{

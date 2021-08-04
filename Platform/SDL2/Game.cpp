@@ -13,8 +13,7 @@
 
 #define DEFAULT_SCREEN_WIDTH 1080
 #define DEFAULT_SCREEN_HEIGHT 1920
-#define μs std::chrono::microseconds
-
+#define UPDATES_A_SECOND 1000
 
 int main(int argc, char* args[]) {
     if (SDL_Init(SDL_INIT_VIDEO) > 0)
@@ -33,15 +32,15 @@ int main(int argc, char* args[]) {
     bool gameRunning = true;
     SDL_Event event;
 
-    //everything above this is for initializing the game, and its assets, please dont initialize everything the game uses at once
-
-
-    //std::vector<autoTexture *> entitiees = {&game.mainMenu.invertedShak,&game.mainMenu.blankMenu,&game.mainMenu.highlightedMenu}; //rendered from left to right
     bool shouldDisplay = false; // rendering constantly, and not actually displaying causes memory to stack higher and higher until the frames can be shown
-    bool sizechanged = false;
+    bool windowSizedChanged = false;
 
-    Uint32 lastTickHappened = 0;
+    double alpha = 0.0;
+    Uint64 last_time = 0; 
 
+#define lengthof(array) (sizeof(array) / sizeof(*(array)))
+    ;
+    Uint64 ticks = 0;
     while (gameRunning) {
 
         while (SDL_PollEvent(&event)) {
@@ -54,7 +53,7 @@ int main(int argc, char* args[]) {
                     shouldDisplay = false;
                 }
                 else if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    sizechanged = true;
+                    windowSizedChanged = true;
                 }
             }
             else if (event.type == SDL_QUIT)
@@ -76,42 +75,42 @@ int main(int argc, char* args[]) {
         }
 
         if (!shouldDisplay) { // skip frames that cant be shown due to window not currently accepting frames to display
-            //window.renderFrame();
-            constexpr int FRAME_RATE = ((1.0 / 60.0) * 1000); // time spent in a frame in ms
-            constexpr int FRAME_RATE2 = ((1.0 / 60.0) * 1000.0 * 1000.0); // time spent in a frame in microseconds
-            const int denominator = SDL_GetPerformanceFrequency() / 1000 / 1000; // SDL_GetPerformanceCounter is 10x smaller than microseconds, so this is needed to divide later
-            constexpr bool highPerformanceMode = true;
 
+            constexpr bool highPerformanceMode = true;
             if (highPerformanceMode) {
-                Uint64 ticks = SDL_GetPerformanceCounter();
-                                
-                if ((ticks % FRAME_RATE2) == 0) {
+
+                const auto now = SDL_GetPerformanceCounter();
+                alpha += (double)((double)(now - last_time) / SDL_GetPerformanceFrequency() * UPDATES_A_SECOND);
+                last_time = now;
+
+                while (alpha > 1.0) {
                     GameManager.menuLogic(input, prevInput);
-                    GameManager.render(window);
+                    prevInput = input;
+
+                    alpha -= 1.0;
                 }
-                else {
-                    std::this_thread::sleep_for(μs(std::abs((int)((ticks / denominator) % FRAME_RATE2) - FRAME_RATE2) + 1));
-                    GameManager.menuLogic(input, prevInput);
-                    GameManager.render(window);
-                }
+
+                GameManager.render(window);
+
             }
             else {
+                constexpr int FRAME_RATE = ((1.0 / 60.0) * 1000); // time spent in a frame in ms
                 int32_t ticks = SDL_GetTicks() % (FRAME_RATE);
                 if ((ticks) == 0) {
                     GameManager.menuLogic(input, prevInput);
+                    prevInput = input;
                     GameManager.render(window);
                 }
                 else {
                     SDL_Delay((Uint32)std::abs((int)(ticks - FRAME_RATE)) + 1);
                     GameManager.menuLogic(input, prevInput);
+                    prevInput = input;
                     GameManager.render(window);
                 }
             }
 
-
         }
-        window.display();
-        prevInput = input;
+        //window.display();
     }
 
     window.cleanUp();
