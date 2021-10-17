@@ -1,5 +1,8 @@
 //not my code#
 #pragma once
+#ifndef SHAK_RENDER_WINDOW
+#define SHAK_RENDER_WINDOW
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <vector>
@@ -28,3 +31,5 @@ private:
 
   friend class autoTexture;
 };
+
+#endif

@@ -155,8 +155,8 @@
 # 	SOURCES "Main.c"
 # )
 function(AddBinary NAME TYPE)
-	if((NOT ${TYPE} STREQUAL LIBRARY) AND (NOT ${TYPE} STREQUAL EXECUTABLE))
-		message(FATAL_ERROR "Invalid type; must be LIBRARY or EXECUTABLE")
+	if((NOT ${TYPE} STREQUAL LIBRARY) AND (NOT ${TYPE} STREQUAL EXECUTABLE) AND (NOT ${TYPE} STREQUAL RUNTIME) AND (NOT ${TYPE} STREQUAL PLUGIN) AND (NOT ${TYPE} STREQUAL MODULE) AND (NOT ${TYPE} STREQUAL BRUH))
+		message(FATAL_ERROR "Invalid type; must be LIBRARY or EXECUTABLE or RUNTIME or PLUGIN")
 	endif()
 
 	set(LIST_NAMES SOURCES INCLUDE_DIRS LIBRARIES)
@@ -197,9 +197,15 @@ function(AddBinary NAME TYPE)
 	endif()
 
 	if(${TYPE} STREQUAL LIBRARY)
-		add_library(${NAME} ${SOURCES})
+		add_library(${NAME} STATIC ${SOURCES})
 	elseif(${TYPE} STREQUAL EXECUTABLE)
 		add_executable(${NAME} ${SOURCES})
+	elseif(${TYPE} STREQUAL RUNTIME)
+		add_library(${NAME} SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
+	elseif(${TYPE} STREQUAL PLUGIN)
+		add_library(${NAME} MODULE SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
+	elseif(${TYPE} STREQUAL BRUH)
+		add_library(${NAME} MODULE SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
 	endif()
 	target_include_directories(${NAME} PUBLIC ${INCLUDE_DIRS})
 	target_link_libraries(${NAME} PRIVATE ${LIBRARIES})

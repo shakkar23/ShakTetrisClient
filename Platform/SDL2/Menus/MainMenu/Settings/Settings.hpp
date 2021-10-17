@@ -1,4 +1,6 @@
 #pragma once
+#ifndef SHAK_SETTINGS
+#define SHAK_SETTINGS
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -7,32 +9,29 @@
 #include "Platform/SDL2/Menus/Menus.hpp"
 #include "Platform/SDL2/Menus/MainMenu/MainMenu.hpp"
 #include "ShakTris/Input/Input.hpp"
+#include "Platform/SDL2/headers/Game.hpp"
 
 
 class settingsMenuGUI : public menuGUI {
 
 
 public:
-	settingsMenuGUI() :
-		submenu(nullptr), isInitialized(false)
-	{}
-	settingsMenuGUI(RenderWindow& window) :
-		submenu(nullptr) {
-		Init(window);
-	}
+	settingsMenuGUI() = delete;
+	settingsMenuGUI(RenderWindow& window);
+	settingsMenuGUI(menuGUI * parentMenu);
+
 	autoTexture background;
 	autoTexture playButton;
 	autoTexture settingsButton;
 	autoTexture exitButton;
-	menuGUI* submenu;
-	~settingsMenuGUI()
-	{
-	}
+	menuGUI* metaMenu;
+	menuGUI* subMenu;
+	~settingsMenuGUI();
 
 	void Init(RenderWindow& window);
 	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
 	void render(RenderWindow& window);
-	bool isInitialized = false;
+	
 private:
 	uint_fast8_t highlighted{};
 	const int numberOfOptions = 3;
@@ -44,3 +43,5 @@ private:
 	};
 
 };
+
+#endif

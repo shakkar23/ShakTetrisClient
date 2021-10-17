@@ -1,4 +1,6 @@
 #pragma once
+#ifndef SHAK_MENUS
+#define SHAK_MENUS
 
 #include<stdint.h>
 #include <SDL2/SDL.h>
@@ -20,7 +22,9 @@ public:
 	virtual void menuLogic(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput) = 0; // use the menu variables as the controls
 	virtual void render(RenderWindow& window) = 0;
 	bool isInitialized = false;
+	bool submenuWasDeleted=false;
 private:
 
 };
 
+#endif

@@ -1,5 +1,24 @@
 #include "MainMenu.hpp"
 
+mainMenuGUI::mainMenuGUI() :
+	subMenu(nullptr), metaMenu(nullptr) {
+	isInitialized = false;
+}
+mainMenuGUI::mainMenuGUI(RenderWindow& window) :
+	subMenu(nullptr) {
+	Init(window);
+}
+mainMenuGUI::mainMenuGUI(menuGUI* parentMenu) :
+	subMenu(nullptr) {
+	isInitialized = false;
+	this->metaMenu = parentMenu;
+}
+mainMenuGUI::~mainMenuGUI() {
+	if (subMenu != nullptr) {
+		delete subMenu;
+	}
+}
+
 void mainMenuGUI::Init(RenderWindow& window) {
 	if (!isInitialized) {
 		background.Init("Asset/Sprites/MainMenu/background.png", window);
@@ -28,7 +47,12 @@ void mainMenuGUI::Init(RenderWindow& window) {
 
 void mainMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
 	// in this scenario the top option is 0, and you increment to go down
-	if (this->submenu == nullptr) {
+
+	if (submenuWasDeleted) {
+		subMenu = nullptr;
+		submenuWasDeleted = false;
+	}
+	if (this->subMenu == nullptr) {
 		if (input.menuDown && !prevInput.menuDown) {
 			highlighted = (highlighted + 1) % numberOfOptions;
 		}
@@ -45,21 +69,25 @@ void mainMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 
 				break;
 			case mainMenuGUI::Settings:
-				submenu = new settingsMenuGUI();
+				subMenu = new settingsMenuGUI(this);
 				break;
 			case mainMenuGUI::Exit:
-
+				
+				metaMenu->submenuWasDeleted = true;
+				delete this;
 				break;
 			default:
 				break;
 			}
 		}
 	}
-	else { submenu->menuLogic(input, prevInput); }
+	else { 
+		subMenu->menuLogic(input, prevInput); 
+	}
 }
 
 void mainMenuGUI::render(RenderWindow& window) {
-	if (this->submenu == nullptr) {
+	if (this->subMenu == nullptr) {
 		Uint8 r = 0, g = 0, b = 255;
 		Uint8 rDud = 255, gDud = 255, bDud = 255;
 		switch ((GameState)highlighted)
@@ -97,11 +125,11 @@ void mainMenuGUI::render(RenderWindow& window) {
 			window.render(*e);
 		}
 	}
-	else if (!submenu->isInitialized) { 
-		submenu->Init(window); 
-		submenu->render(window);
+	else if (!subMenu->isInitialized) { 
+		subMenu->Init(window); 
+		subMenu->render(window);
 	}
 	else { 
-		submenu->render(window); 
+		subMenu->render(window); 
 	}
 }

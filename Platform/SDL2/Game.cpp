@@ -5,15 +5,13 @@
 #include "headers/entity.hpp"
 #include "headers/RenderWindow.hpp"
 #include "Keyboard/Keyboard.hpp"
-#include "Menus/Menus.hpp"
 #include "gameManager/gameManager.hpp"
-
+#include "Menus/Menus.hpp"
+//#include "ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
+#include "ShakTris/Plugins/PluginManager.hpp"
 #include <atomic>
 #include <thread>
 
-#define DEFAULT_SCREEN_WIDTH 1080
-#define DEFAULT_SCREEN_HEIGHT 1920
-#define UPDATES_A_SECOND 1000
 
 int main(int argc, char* args[]) {
     if (SDL_Init(SDL_INIT_VIDEO) > 0)
@@ -36,11 +34,9 @@ int main(int argc, char* args[]) {
     bool windowSizedChanged = false;
 
     double alpha = 0.0;
-    Uint64 last_time = 0; 
-
-#define lengthof(array) (sizeof(array) / sizeof(*(array)))
-    ;
+    Uint64 last_time = 0;
     Uint64 ticks = 0;
+
     while (gameRunning) {
 
         while (SDL_PollEvent(&event)) {
@@ -64,8 +60,9 @@ int main(int argc, char* args[]) {
                     Shakkar::Keyboard::pressKey(event.key.keysym.scancode, input);
 
                     //std::cout << "keydown" << ++isanykeydown << std::endl; //check for what key is pressed, and then up this value
-                    std::cout << "Physical" << SDL_GetScancodeName(event.key.keysym.scancode) << " key acting as" << SDL_GetKeyName(event.key.keysym.sym) << " key" <<
-                        std::endl << input.menuDown;
+                    
+                    //std::cout << "Physical" << SDL_GetScancodeName(event.key.keysym.scancode) << " key acting as" << SDL_GetKeyName(event.key.keysym.sym) << " key" <<
+                        //std::endl << input.menuDown;
                 }
                 else {
                     Shakkar::Keyboard::unpressKey(event.key.keysym.scancode, input);
@@ -78,32 +75,40 @@ int main(int argc, char* args[]) {
 
             constexpr bool highPerformanceMode = true;
             if (highPerformanceMode) {
-
                 const auto now = SDL_GetPerformanceCounter();
                 alpha += (double)((double)(now - last_time) / SDL_GetPerformanceFrequency() * UPDATES_A_SECOND);
                 last_time = now;
-
+                
                 while (alpha > 1.0) {
-                    GameManager.menuLogic(input, prevInput);
+                    if (!GameManager.gameLogic(input, prevInput)) {
+                        gameRunning = false;
+                        break;
+                    }
                     prevInput = input;
 
                     alpha -= 1.0;
                 }
-
-                GameManager.render(window);
+                if (gameRunning) {
+                    GameManager.render(window);
+                }
+                else {
+                    gameRunning = false;
+                }
 
             }
             else {
-                constexpr int FRAME_RATE = ((1.0 / 60.0) * 1000); // time spent in a frame in ms
+                constexpr int FRAME_RATE = (int) ((1.0 / 60.0) * 1000); // time spent in a frame in ms
                 int32_t ticks = SDL_GetTicks() % (FRAME_RATE);
                 if ((ticks) == 0) {
-                    GameManager.menuLogic(input, prevInput);
+                    if (!GameManager.gameLogic(input, prevInput))
+                        break;
                     prevInput = input;
                     GameManager.render(window);
                 }
                 else {
                     SDL_Delay((Uint32)std::abs((int)(ticks - FRAME_RATE)) + 1);
-                    GameManager.menuLogic(input, prevInput);
+                    if (!GameManager.gameLogic(input, prevInput))
+                        break;
                     prevInput = input;
                     GameManager.render(window);
                 }

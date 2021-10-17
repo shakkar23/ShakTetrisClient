@@ -1,5 +1,7 @@
-//not my code, but modified by me
 #pragma once
+//not my code, but modified by me
+#ifndef SHAK_ENTITY
+#define SHAK_ENTITY
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -24,7 +26,7 @@ public:
   SDL_Rect sprite{};
 
   void Init(const char* filepath, RenderWindow window);
-  void autoTexture::unInit();
+  void unInit();
   SDL_Texture *getTex();
   SDL_Rect getTextureRegion();
   SDL_Rect getSprite(); 
@@ -42,3 +44,5 @@ private:
   SDL_Texture* tex{};
   void loadTexture(const char* p_filePath, RenderWindow window);
 };
+
+#endif

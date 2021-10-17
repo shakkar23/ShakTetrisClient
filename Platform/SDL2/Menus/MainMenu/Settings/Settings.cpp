@@ -2,7 +2,25 @@
 
 //UHHHHHHHHHHHHHHHHHHHHHHHHHH
 
-
+//settingsMenuGUI::settingsMenuGUI() :
+//	subMenu(nullptr) {
+//	isInitialized = false;
+//}
+settingsMenuGUI::settingsMenuGUI(menuGUI *parentMenu) :
+	subMenu(nullptr) {
+	isInitialized = false;
+	this->metaMenu = parentMenu;
+}
+settingsMenuGUI::settingsMenuGUI(RenderWindow& window) :
+	subMenu(nullptr) {
+	isInitialized = false;
+	Init(window);
+}
+settingsMenuGUI::~settingsMenuGUI() {
+	if (subMenu != nullptr) {
+		delete subMenu;
+	}
+}
 void settingsMenuGUI::Init(RenderWindow& window) {
 	if (!isInitialized) {
 		background.Init("Asset/Sprites/invertedshak.png", window);
@@ -11,7 +29,7 @@ void settingsMenuGUI::Init(RenderWindow& window) {
 		exitButton.Init("Asset/Sprites/MainMenu/exitText.png", window);
 
 		//change this
-		background.sprite = { 0,0,1920,1080 };
+		background.sprite = { 0,0,DEFAULT_SCREEN_HEIGHT,DEFAULT_SCREEN_WIDTH };
 		//background.textureRegion;
 
 		playButton.sprite = { 0,0,177,61 };
@@ -31,7 +49,12 @@ void settingsMenuGUI::Init(RenderWindow& window) {
 
 void settingsMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
 	// in this scenario the top option is 0, and you increment to go down
-	if (this->submenu == nullptr) {
+
+	if (submenuWasDeleted) {
+		subMenu = nullptr;
+		submenuWasDeleted = false;
+	}
+	if (this->subMenu == nullptr) {
 		if (input.menuDown && !prevInput.menuDown) {
 			highlighted = (highlighted + 1) % numberOfOptions;
 		}
@@ -48,21 +71,23 @@ void settingsMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitma
 
 				break;
 			case settingsMenuGUI::Settings:
-				submenu = new mainMenuGUI();
+				subMenu = new mainMenuGUI(this);
+				
 				break;
 			case settingsMenuGUI::Exit:
-
+				metaMenu->submenuWasDeleted = true;
+				delete this;
 				break;
 			default:
 				break;
 			}
 		}
 	}
-	else { submenu->menuLogic(input, prevInput); }
+	else { subMenu->menuLogic(input, prevInput); }
 }
 
 void settingsMenuGUI::render(RenderWindow& window) {
-	if (this->submenu == nullptr) {
+	if (this->subMenu == nullptr) {
 		Uint8 r = 0, g = 0, b = 255;
 		Uint8 rDud = 255, gDud = 255, bDud = 255;
 		switch ((GameState)highlighted)
@@ -101,11 +126,11 @@ void settingsMenuGUI::render(RenderWindow& window) {
 			window.render(*e);
 		}
 	}
-	else if (!submenu->isInitialized) {
-		submenu->Init(window);
-		submenu->render(window);
+	else if (!subMenu->isInitialized) {
+		subMenu->Init(window);
+		subMenu->render(window);
 	}
 	else {
-		submenu->render(window);
+		subMenu->render(window);
 	}
 }
