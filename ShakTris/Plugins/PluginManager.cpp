@@ -15,8 +15,8 @@ Plugin::Plugin(std::string_view path) {
     }
     std::string initializePlugin("initializePlugin");
     std::string getPluginName("getPluginName");
-    std::string GetPluginAuthor("GetPluginAuthor");
-    std::string GetPluginDescription("GetPluginDescription");
+    std::string GetPluginAuthor("getPluginAuthor");
+    std::string GetPluginDescription("getPluginDescription");
     this->m_initializePluginFunction = getPluginFunction<InitializePluginFunc>(initializePlugin);
     this->m_getPluginNameFunction = getPluginFunction<GetPluginNameFunc>(getPluginName);
     this->m_getPluginAuthorFunction = getPluginFunction<GetPluginAuthorFunc>(GetPluginAuthor);
@@ -68,7 +68,7 @@ std::string Plugin::getPluginDescription() const {
     if (this->m_getPluginDescriptionFunction != nullptr)
         return this->m_getPluginDescriptionFunction();
     else
-        return "";
+        return "Unknown Description";
 }
 
 bool PluginManager::load(std::string_view pluginFolder) {

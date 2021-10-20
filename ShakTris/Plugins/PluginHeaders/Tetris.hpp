@@ -4,6 +4,7 @@
 #ifndef TETRIS
 #define TETRIS
 #include "../../../Platform/SDL2/headers/RenderWindow.hpp"
+#include "../../SDL2/headers/Game.hpp"
 
 namespace Shakkar {
 

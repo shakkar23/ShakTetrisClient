@@ -24,7 +24,8 @@ AddBinary(
 	SOURCES      ${PLUGIN_SOURCES}
 	INCLUDE_DIRS ${PLUGIN_INCLUDE_DIRS}
 	LIBRARIES
-		SDL2::SDL2main
+		SDL2::SDL2
+		SDL2::SDL2_image
 		PlatformSDL2
 		Registry
 )

@@ -8,7 +8,7 @@
 #define PLUGIN_SETUP(name, author, description) PLUGIN_SETUP_IMPL(PLUGIN_NAME, name, author, description)
 
 #define PLUGIN_SETUP_IMPL(namespaceName, name, author, description)                                \
-    namespace namespaceName {                                                    \
+    namespace namespaceName {                                                                       \
         DLL void initializePlugin();                                                                 \
         DLL const char* getPluginName() { return name; }                                              \
         DLL const char* getPluginAuthor() { return author; }                                           \
