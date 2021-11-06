@@ -52,19 +52,19 @@ int main(int argc, char* args[]) {
                     windowSizedChanged = true;
                 }
             }
-            else if (event.type == SDL_QUIT)
-                gameRunning = false;
             else if ((event.key.type == SDL_KEYDOWN) || (event.key.type == SDL_KEYUP)) {
                 if (event.key.state == SDL_PRESSED) {
-                    if (event.key.repeat) 
+                    if (event.key.repeat)
                         continue;
                     Shakkar::Keyboard::pressKey(event.key.keysym.scancode, input);
-
+                    //std::cout << "Physical" << SDL_GetScancodeName(event.key.keysym.scancode) << " key acting as the " << SDL_GetKeyName(event.key.keysym.sym) << " key" << std::endl;
                 }
                 else {
                     Shakkar::Keyboard::unpressKey(event.key.keysym.scancode, input);
                 }
             }
+            else if (event.type == SDL_QUIT)
+                gameRunning = false;
 
         }
 
