@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE on)
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 project("ShakTetrisClient" VERSION 0.7.9)
 

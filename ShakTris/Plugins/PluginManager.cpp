@@ -42,9 +42,10 @@ Plugin::~Plugin() {
         FreeLibrary(this->m_handle);
 }
 
-void Plugin::initializePlugin() const {
-    if (this->m_initializePluginFunction != nullptr)
-        this->m_initializePluginFunction();
+void Plugin::initializePlugin(RenderWindow& window) const {
+    if (this->m_initializePluginFunction != nullptr) {
+        this->m_initializePluginFunction((void *)&window);
+    }
     else {
         std::cout << ":( couldnt initialize" << std::endl;
     }
@@ -138,7 +139,8 @@ std::vector<std::string> getPath() {
 #endif
 }
 
-bool loadPlugins() {
+bool loadPlugins(RenderWindow &window) {
+    printf("loading Plugins");
     for (const auto& dir : getPath()) {
         PluginManager::load(dir);
     }
@@ -148,7 +150,7 @@ bool loadPlugins() {
     }
 
     for (const auto& plugin : PluginManager::getPlugins()) {
-        plugin.initializePlugin(); 
+        plugin.initializePlugin(window);
     }
 
     return true;

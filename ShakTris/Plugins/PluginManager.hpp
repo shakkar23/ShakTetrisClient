@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include "../../Platform/SDL2/headers/RenderWindow.hpp"
 
 #if defined(_WINDOWS)
 #include <windows.h>
@@ -25,7 +26,7 @@ public:
     Plugin() {}
     ~Plugin();
 
-    void initializePlugin() const;
+    void initializePlugin(RenderWindow& window) const;
     std::string getPluginName() const;
     std::string getPluginAuthor() const;
     std::string getPluginDescription() const;
@@ -33,7 +34,7 @@ public:
 
 
 private:
-    using InitializePluginFunc = void(*)();
+    using InitializePluginFunc = void(*)(void *window);
     using GetPluginNameFunc = const char* (*)();
     using GetPluginAuthorFunc = const char* (*)();
     using GetPluginDescriptionFunc = const char* (*)();
@@ -72,7 +73,7 @@ private:
     static inline std::vector<Plugin> s_plugins;
 };
 
-bool loadPlugins();
+bool loadPlugins(RenderWindow& window);
 bool unloadPlugins();
 std::vector<std::string> getPath();
 

@@ -5,13 +5,16 @@
 #include <SDL_image.h>
 
 demo::demo() : Shakkar::Tetris("bruh") {
-    int i;
-    i = 2;
+    
+    isPlaying = true;
+}
+void demo::Init(RenderWindow& window) {
+    game.Init(window);
 }
 
 static int iter{};
-void demo::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
-    if (iter != 2500)
+void demo::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
+    if (iter != 2500) // game starting delay, except I suck
     {
         iter++;
         return;
@@ -21,13 +24,20 @@ void demo::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInpu
 }
 
 void demo::render(RenderWindow& window)  {
-
+    
+    game.render(window);
 }
 
 
 
-PLUGIN_SETUP("john tronathon", "Shakkar23", "ok so basically this is an example and its for example purposes, and its an example that is used for being an example") {
-
-    Shakkar::Plugins::add<demo>();
+PLUGIN_SETUP("example", "Shakkar23", "ok so basically this is an example and its for example purposes, and its an example that is used for being an example") {
+    printf("initializing example plugin...\n");
+    auto  prev = Shakkar::Plugins::getEntries().size();
+    Shakkar::Plugins::addorig<demo>();
+    printf("%d\n", Shakkar::Plugins::getEntries().empty());
+    auto cur = Shakkar::Plugins::getEntries().size();
+    if(cur != prev)
+        Shakkar::Plugins::getEntries().back()->Init((*(RenderWindow*)window));
+    auto p = (&Correct::games);
     
 }

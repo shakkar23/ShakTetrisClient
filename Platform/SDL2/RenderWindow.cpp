@@ -5,6 +5,7 @@
 
 #include "headers/entity.hpp"
 #include "headers/RenderWindow.hpp"
+#include "headers/Game.hpp"
 
 RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
     : window(NULL), renderer(NULL) {
@@ -18,7 +19,7 @@ RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
 
   renderer = SDL_CreateRenderer(
       window, -1, SDL_RENDERER_ACCELERATED | SDL_RendererFlags::SDL_RENDERER_PRESENTVSYNC);
-  SDL_RenderSetLogicalSize(this->renderer, 1920 , 1080);  
+  SDL_RenderSetLogicalSize(this->renderer, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT); 
 
 
 
@@ -89,11 +90,11 @@ void RenderWindow::getWindowSize(int& x, int& y) {
 void RenderWindow::setWindowSize(int x, int y) {
     SDL_SetWindowSize(this->window, x, y);
 }
-void RenderWindow::renderFrame(std::vector<autoTexture *> & entities) {
+
+void RenderWindow::renderFrame(std::vector<autoTexture*>& entities) {
     // skip frames that cant be shown due to window not currently accepting frames to display
-        this->clear();
-        for (autoTexture *e : entities) {
-            this->render(*e);
-        
+    this->clear();
+    for (autoTexture* e : entities) {
+        this->render(*e);
     }
 }

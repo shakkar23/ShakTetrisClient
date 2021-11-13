@@ -9,15 +9,15 @@
 
 #define PLUGIN_SETUP_IMPL(namespaceName, name, author, description)                                \
     namespace namespaceName {                                                                       \
-        DLL void initializePlugin();                                                                 \
+        DLL void initializePlugin(void *window);                                                     \
         DLL const char* getPluginName() { return name; }                                              \
         DLL const char* getPluginAuthor() { return author; }                                           \
         DLL const char* getPluginDescription() { return description; }                                  \
         }                                                                                                \
-    void namespaceName::initializePlugin()
+    void namespaceName::initializePlugin(void *window)
 
 namespace Correct {
-    extern std::vector<Shakkar::Tetris*> views;
+    extern std::vector<Shakkar::Tetris*> games;
 };
 namespace Shakkar {
     using std::derived_from;
@@ -26,16 +26,18 @@ namespace Shakkar {
     
     struct Plugins {
         Plugins() = delete;
-
+        template<Shakkar::derived_from<Shakkar::Tetris> T, typename ... Args>
+        static void addorig(Args&& ... args) {
+            return add2(new T(std::forward<Args>(args)...));
+        }
         template<Shakkar::derived_from<Shakkar::Tetris> T>
-        static void add() {
+            static void addnew() {
             return add2(new T());
         }
 
-        static std::vector<Tetris*> getEntries();
+        static std::vector<Tetris*> &getEntries();
 
-    private:
-        static void add2(Tetris* view);
+        static void add2(Tetris* game);
 
 
     };

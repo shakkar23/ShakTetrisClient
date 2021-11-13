@@ -7,7 +7,7 @@
 
 namespace Shakkar {
     namespace Keyboard {
-        void pressKey(SDL_Scancode scan, Shakkar::inputBitmap &input) {
+        void pressKey(const SDL_Scancode scan, Shakkar::inputBitmap &input) {
             if (scan == SDL_Scancode::SDL_SCANCODE_A)
             {
                 input.setLeft();
@@ -74,7 +74,7 @@ namespace Shakkar {
             }
             
         }
-        void unpressKey( SDL_Scancode scan, Shakkar::inputBitmap &input) {
+        void unpressKey( const SDL_Scancode scan, Shakkar::inputBitmap &input) {
             if (scan == SDL_Scancode::SDL_SCANCODE_A)
             {
                 input.unsetLeft();

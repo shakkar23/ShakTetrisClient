@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <stdint.h>
 
 // the definition needs to be a square, otherwise change how you rotate pieces pls
@@ -29,7 +29,7 @@ enum class PieceType : uint_fast8_t {
     empty = ColorType::empty,
     number_of_PieceTypes
 };
-constexpr ColorType PieceTypeToColorType(PieceType color) {
+const ColorType PieceTypeToColorType(PieceType color) {
     switch (color)
     {
     case PieceType::S:
@@ -67,6 +67,8 @@ enum TurnDirection : uint_fast8_t {
     oneEighty,
 };
 
+// note: for some reason the piece definition is [piecetype][PIECEHEIGHT - 1 - y][x]
+// everything else in the repo accounts for this, so there is no point in changing it as of writing this note, ¯\_(ツ)_ /¯
 const ColorType PieceDefinition[(int)PieceType::number_of_PieceTypes][PIECEWIDTH][PIECEHEIGHT] = {
     // the /**/ is to indicate the center of the definition, I thought it was clever 
 

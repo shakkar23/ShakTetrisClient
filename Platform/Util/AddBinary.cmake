@@ -208,5 +208,5 @@ function(AddBinary NAME TYPE)
 		add_library(${NAME} MODULE SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
 	endif()
 	target_include_directories(${NAME} PUBLIC ${INCLUDE_DIRS})
-	target_link_libraries(${NAME} PRIVATE ${LIBRARIES})
+	target_link_libraries(${NAME} ${LIBRARIES})
 endfunction()

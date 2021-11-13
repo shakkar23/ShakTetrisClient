@@ -5,11 +5,11 @@
 #include <iostream>
 
 autoTexture::autoTexture() {}
-autoTexture::autoTexture(const char* filepath, RenderWindow window) {
+autoTexture::autoTexture(const char* filepath, RenderWindow &window) {
     this->loadTexture(filepath, window);
 }
 
-void autoTexture::Init(const char* filepath, RenderWindow window)
+void autoTexture::Init(const char* filepath, RenderWindow &window)
 {
     if (tex != nullptr) return;
     this->loadTexture(filepath, window);
@@ -41,7 +41,7 @@ SDL_Texture *autoTexture::getTex() { return tex; }
 SDL_Rect autoTexture::getSprite() { return sprite; }
 SDL_Rect autoTexture::getTextureRegion() { return textureRegion; }
 
-void autoTexture::loadTexture(const char* p_filePath, RenderWindow window) {
+void autoTexture::loadTexture(const char* p_filePath, RenderWindow &window) {
     
     this->tex = IMG_LoadTexture(window.renderer, p_filePath);
     std::cout << SDL_GetError()<<std::endl;

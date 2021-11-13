@@ -1,10 +1,10 @@
 #pragma once
 
 #include "PieceDefs.hpp"
-#include "Platform\SDL2\headers\Game.hpp""
+#include "../../../../Platform/SDL2/headers/Game.hpp"
 #include <vector>
 
-const int half(int i) {
+const auto half(int i) {
     return i / 2;
 }
 
@@ -19,6 +19,8 @@ public:
         this->kind = kind;
         setX(x); setY(y);
         this->spin = spin;
+
+        //populate local piece definition
         for (size_t w = 0; w < PIECEWIDTH; w++)
         {
             for (size_t h = 0; h < PIECEHEIGHT; h++)
@@ -26,6 +28,7 @@ public:
                 piecedef[w][h] = PieceDefinition[PieceTypeToColorType(kind)][w][h];
             }
         }
+         //match up the spin direction of the local piece definition with what is given by the params
         switch (spin)
         {
         case North:
@@ -63,30 +66,31 @@ public:
                 ColorType temp = piecedef[x][y];
 
                 // Move values from right to top
-                piecedef[x][y] = piecedef[y][PIECEWIDTHANDHEIGHT - 1 - x];
+                piecedef[x][y] = piecedef[y][(size_t)PIECEWIDTHANDHEIGHT - 1 - x];
 
                 // Move values from bottom to right
-                piecedef[y][PIECEWIDTHANDHEIGHT - 1 - x]
-                    = piecedef[PIECEWIDTHANDHEIGHT - 1 - x][PIECEWIDTHANDHEIGHT - 1 - y];
+                piecedef[y][(size_t)PIECEWIDTHANDHEIGHT - 1 - x]
+                    = piecedef[(size_t)PIECEWIDTHANDHEIGHT - 1 - x][(size_t)PIECEWIDTHANDHEIGHT - 1 - y];
 
                 // Move values from left to bottom
-                piecedef[PIECEWIDTHANDHEIGHT - 1 - x][PIECEWIDTHANDHEIGHT - 1 - y]
-                    = piecedef[PIECEWIDTHANDHEIGHT - 1 - y][x];
+                piecedef[(size_t)PIECEWIDTHANDHEIGHT - 1 - x][(size_t)PIECEWIDTHANDHEIGHT - 1 - y]
+                    = piecedef[(size_t)PIECEWIDTHANDHEIGHT - 1 - y][x];
 
                 // Assign temp to left
-                piecedef[PIECEWIDTHANDHEIGHT - 1 - y][x] = temp;
+                piecedef[(size_t)PIECEWIDTHANDHEIGHT - 1 - y][x] = temp;
             }
         }
     }
 
-    void setX(size_t setter) {
+    void setX(const int_fast8_t setter) {
         x = setter;
         realX = setter + half(PIECEWIDTH);
     }
-    void setY(size_t setter) {
+    void setY(const int_fast8_t setter) {
         y = setter;
         realY = setter + half(PIECEWIDTH);
     }
+
     int_fast8_t x{};
     int_fast8_t y{};
     int_fast8_t realX{};
@@ -99,8 +103,10 @@ public:
 };
 
 #include "rotation_constants.hpp"
+
 class Board {
 public:
+
     Board() {
         for (size_t w = 0; w < BOARDWIDTH; w++)
         {
@@ -110,22 +116,28 @@ public:
             }
         }
     }
+
     void sonicDrop(Piece& piece) {
-        while (trySoftDrop(piece));
+        while (trySoftDrop(piece))
+            ;
+        return;
     }
 
     bool trySoftDrop(Piece &piece) {
-        piece.setY(piece.x--);
+        piece.setY((piece.x-1));
         if (isCollide(piece)) {
-            piece.setY(piece.x++);
+            piece.setY((piece.x+1));
             return false;
         }
         return true;
     }
 
-    bool tryRotateLeft(Piece piece) {
+    bool tryRotateLeft(Piece &piece) {
         if (piece.kind == PieceType::O)
             return true;
+        // rotate the piece definition left first
+        // this is to test if we can even rotate it in the first place
+        // need to rotate it back if fails 
         piece.rotatePieceMatrixRight();
         piece.rotatePieceMatrixRight();
         piece.rotatePieceMatrixRight();
@@ -147,7 +159,7 @@ public:
     }
 
 
-    bool tryRotate(Piece& piece, TurnDirection direction) {
+    bool tryRotate(Piece &piece, TurnDirection direction) {
         auto incrRot = [&]() {
             switch (piece.spin)
             {
@@ -244,7 +256,7 @@ public:
         return false;
     }
 
-    void setPiece(Piece piece) {
+    void setPiece(const Piece &piece) {
         for (int h = piece.y, PieceW = PIECEHEIGHT - 1; h < PIECEHEIGHT + piece.y; h++, PieceW--)// subtract the width cause yes, it makes adding go up, due to the nautre of how to display arrays visually
         {
             for (int w = piece.x, PieceH = 0; w < PIECEWIDTH + piece.x; w++, PieceH++)
@@ -257,7 +269,7 @@ public:
         }
     }
 
-    bool isCollide(Piece piece) {
+    bool isCollide(const Piece &piece) {
         for (int w = piece.x; w < PIECEWIDTH + piece.x; w++)// subtract the height cause yes, it makes adding go up, due to the nautre of how to display arrays visually
         {
             for (int h = piece.y; h < PIECEHEIGHT + piece.y; h++)
@@ -277,7 +289,7 @@ public:
         return false;
     }
 
-    constexpr const char colorTypeToString(ColorType bruh) {
+    constexpr const char colorTypeToString(const ColorType bruh) {
         switch (bruh)
         {
         case S:
@@ -354,17 +366,37 @@ public:
     Game();
     ~Game();
 
-    void gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
+    void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput);
     void render(RenderWindow& window);
-
+    void Init(RenderWindow& window) {
+        this->background.Init("Asset/Sprites/exampleAssets/TetrisBackground.png", window); //1080p background
+        this->matrix.Init("Asset/Sprites/Tetris_images/Matrix.png", window); // original size is 224 by 299
+        this->pieces.Init("Asset/Sprites/exampleAssets/TetrisPieces.png", window);
+        //this->matrixBackground.Init("Asset/Sprites/exampleAssets/matrixBackground", window); //need this later
+        this->background.sprite = { 0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
+        this->matrix.sprite = {
+            ((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 2),
+            ((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 2),
+            (224 * 4),
+            (299 * 4)
+        }; // first pixel on the matrix should be 50, 34
+        pieces.textureRegion = {0, 0, 16, 16};
+        pieces.sprite = {0,0,24,24};
+    }
 private:
     Piece currentPiece{ PieceType::empty };
     std::vector<Piece> queue{};
     Board board;
+
+    autoTexture background;
+    autoTexture matrix;
+    autoTexture pieces;
+    autoTexture matrixBackground;
 };
 
 Game::Game()
 {
+    printf("example initialized");
     //temp pieces
     queue.reserve(7);
     queue.emplace_back(Piece(PieceType::S));
@@ -374,13 +406,19 @@ Game::Game()
     queue.emplace_back(Piece(PieceType::T));
     queue.emplace_back(Piece(PieceType::O));
     queue.emplace_back(Piece(PieceType::I));
+
 }
 
-const static uint16_t softdropCountdownMAX = 4096; // 4096 cause thats what ppt uses according to fug
-static uint16_t softdropCountdown = softdropCountdownMAX;
+const static uint16_t softdropCountdownMAX = 4096 * 1000; // 4096 cause thats what ppt uses according to fug
+static int32_t softdropCountdown = softdropCountdownMAX;
 
-void Game::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
-    if (currentPiece.kind != PieceType::empty)
+const static uint16_t pieceSpawnDelayMAX = UPDATES_A_SECOND;
+static int32_t pieceSpawnDelay = pieceSpawnDelayMAX;
+
+void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
+
+
+    if (currentPiece.kind != PieceType::empty) // we have a piece!
     {
         if ((input.hardDrop) && !(prevInput.hardDrop))
         {
@@ -391,7 +429,7 @@ void Game::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInpu
         else {
 
 
-            if (softdropCountdown == 0)
+            if (softdropCountdown <= 0)
             {
                 //softdrop pls
                 if (!board.trySoftDrop(currentPiece)) {
@@ -402,7 +440,10 @@ void Game::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInpu
             }
             else {
                 // 20 is another number ppt uses according to fug, and the 60 is for the updates a second ppt uses in their game
-                softdropCountdown - (1 * (input.softDrop * (20 * (UPDATES_A_SECOND / 60))));
+                if (input.softDrop)
+                    softdropCountdown -= (20 * (UPDATES_A_SECOND / 60));
+                else
+                    softdropCountdown-= (UPDATES_A_SECOND / 60);
             }
 
 
@@ -410,12 +451,76 @@ void Game::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInpu
                 board.tryRotate(currentPiece, TurnDirection::Left);
             else if ((!prevInput.rotRight) && (input.rotRight))
                 board.tryRotate(currentPiece, TurnDirection::Right);
+
         }
-    }
+    } else if (pieceSpawnDelay <= 0) { //guarenteed no piece
+        pieceSpawnDelay = pieceSpawnDelayMAX;
+        currentPiece = queue.at(0);
+        queue.erase(queue.begin()); 
+        queue.emplace_back(Piece(PieceType::L));      // !!! please get a new random piece here !!!
+    } else 
+        pieceSpawnDelay--;
+    if (input.menuSelect)
+        ; // delete game
 }
 
 void Game::render(RenderWindow& window) {
-
+    window.render(background);
+    window.render(matrix);
+    const uint16_t width_offset = ((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 2) + 50;
+    const uint16_t height_offset = ((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 2) + 34;
+    for (size_t width = 0; width < BOARDWIDTH; ++width)
+    {
+        for (size_t height = 0; height < BOARDHEIGHT; ++height)
+        {
+            auto helper = [&]() {
+                pieces.sprite.x = width_offset + (width * 24);
+                pieces.sprite.y = height_offset + (height * 24);
+            };
+            switch (board.board[width][height])
+            {
+            case empty:
+                pieces.textureRegion.x = 16;
+                helper();
+                break;
+            case Z:
+                pieces.textureRegion.x = 32;
+                break;
+                helper();
+            case L:
+                pieces.textureRegion.x = 48;
+                helper();
+                break;
+            case O:
+                pieces.textureRegion.x = 64;
+                helper();
+                break;
+            case S:
+                pieces.textureRegion.x = 80;
+                helper();
+                break;
+            case I:
+                pieces.textureRegion.x = 96;
+                helper();
+                break;
+            case J:
+                pieces.textureRegion.x = 112;
+                helper();
+                break;
+            case T:
+                pieces.textureRegion.x = 128;
+                helper();
+                break;
+            case line_clear:
+                pieces.textureRegion.x = 144;
+                helper();
+                break;
+            default:
+                break;
+            }
+            window.render(pieces);
+        }
+    }
 }
 
 Game::~Game()

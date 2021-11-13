@@ -1,7 +1,11 @@
 #include "gameManager.hpp"
 
 void gameManager::Init(RenderWindow& window) {
-    if (!mainMenu->isInitialized) mainMenu->Init(window); submenuWasDeleted = false;
+    loadPlugins(window);
+    if (!mainMenu->isInitialized) 
+        mainMenu->Init(window); 
+    auto p = (&Correct::games);
+    submenuWasDeleted = false;
 }
 
 bool gameManager::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {

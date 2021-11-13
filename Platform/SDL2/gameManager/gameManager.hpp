@@ -7,6 +7,7 @@
 #include "Platform/SDL2/Menus/Menus.hpp"
 #include "Platform/SDL2/headers/RenderWindow.hpp"
 #include "ShakTris/Plugins/PluginManager.hpp"
+#include <thread>
 
 
 // this is the gameManager, it redirects the thread to wherever it needs to go
@@ -14,16 +15,16 @@ class gameManager : public menuGUI
 {
 public:
 	menuGUI* mainMenu;
-	void Init(RenderWindow& window);
-	void menuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
+	void Init(RenderWindow& window) override;
+	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
 	bool gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow &window);
+	void render(RenderWindow &window) override;
 
 	gameManager()
 	{
 		mainMenu = new mainMenuGUI(this);
 		isInitialized = true;
-		loadPlugins();
+		
 	}
 	~gameManager()
 	{

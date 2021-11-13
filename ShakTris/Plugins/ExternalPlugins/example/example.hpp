@@ -7,8 +7,10 @@ class demo : public Shakkar::Tetris {
 public:
     demo();
 
-    void gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
+    void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) override;
     void render(RenderWindow& window) override;
+    void Init(RenderWindow& window) override;
+    
 private:
     Game game;
 };

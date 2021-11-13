@@ -8,7 +8,7 @@
 #include "gameManager/gameManager.hpp"
 #include "Menus/Menus.hpp"
 //#include "ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
-#include "ShakTris/Plugins/PluginManager.hpp"
+#include "../../ShakTris/Plugins/PluginManager.hpp"
 #include <atomic>
 #include <thread>
 
@@ -22,8 +22,8 @@ int main(int argc, char* args[]) {
         std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
 
     RenderWindow window("Shaktris", 480, 272); // tiny window initially, will be full screenable now :sunglasses: // later hopefully
-
     GameManager.Init(window);
+    auto ad = (&Correct::games);
     Shakkar::inputBitmap input;
     Shakkar::inputBitmap prevInput;
 

@@ -11,8 +11,6 @@ set(PLATFORM_SOURCES
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Settings/Settings.cpp"
 	"${SRC}/Platform/SDL2/gameManager/gameManager.cpp"
 )
-option(USE_ORIGINAL_MENU "Use original game's menu (\"Test Mode\")" OFF)
-	list(APPEND PLATFORM_SOURCES "${SRC}/Platform/SDL2/Game.cpp")
 
 set(PLATFORM_HEADERS 
 	"${SRC}/Platform/SDL2/headers/Game.hpp"
@@ -24,12 +22,17 @@ set(PLATFORM_HEADERS
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Play/Play.cpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Settings/Settings.hpp"
 	"${SRC}/Platform/SDL2/gameManager/gameManager.hpp"
-
 	)
 
 set(REGISTRY_HEADERS 
+	"${SRC}/Platform/SDL2/headers/Game.hpp"
+	"${SRC}/Platform/SDL2/headers/RenderWindow.hpp"
 	"${SRC}/ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
 	"${SRC}/ShakTris/Plugins/PluginManager.hpp"
+	)
+	set(REGISTRY_INCLUDE 
+	"${SRC}/Platform/SDL2/headers"
+	"${SRC}/ShakTris/Plugins"
 	)
 
 
@@ -52,10 +55,16 @@ include("${SRC}/Platform/SDL2/ExecutableTypeSimple.cmake")
 #		libshaktris
 #		${PLATFORM_LIBRARIES}
 #)
+project(Registry)
 
-add_library(Registry SHARED STATIC ${REGISTRY_SOURCES})
-target_include_directories(Registry PUBLIC include ${REGISTRY_HEADERS})
-target_link_libraries(Registry PRIVATE SDL2::SDL2 SDL2::SDL2_image)
+if (WIN32)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-export-all-symbols")
+
+endif()
+
+add_library(Registry SHARED ${REGISTRY_SOURCES})
+target_include_directories(Registry PUBLIC ${REGISTRY_INCLUDE})
+target_link_libraries(Registry PUBLIC SDL2::SDL2 SDL2::SDL2_image)
 set_target_properties( 
 		Registry
     PROPERTIES
@@ -64,4 +73,3 @@ set_target_properties(
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 		PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/pdb"
 )
-

@@ -27,7 +27,7 @@ void mainMenuGUI::Init(RenderWindow& window) {
 		exitButton.Init("Asset/Sprites/MainMenu/exitText.png", window);
 
 		//change this
-		background.sprite = { 0,0,1920,1080 };
+		background.sprite = { 0,0,DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
 		//background.textureRegion;
 
 		playButton.sprite = { 0,0,177,61 };
@@ -67,6 +67,7 @@ void mainMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 			{
 			case mainMenuGUI::Play:
 
+				subMenu = new PlayMenuGUI(this);
 				break;
 			case mainMenuGUI::Settings:
 				subMenu = new settingsMenuGUI(this);

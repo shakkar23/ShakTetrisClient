@@ -10,6 +10,7 @@
 #include "ShakTris/Input/Input.hpp"
 #include "Platform/SDL2/headers/Game.hpp"
 #include "ShakTris/Plugins/PluginHeaders/Tetris.hpp"
+#include "ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
 
 
 class PlayMenuGUI : public menuGUI {
@@ -17,15 +18,10 @@ class PlayMenuGUI : public menuGUI {
 
 public:
 	PlayMenuGUI() = delete;
-	PlayMenuGUI(RenderWindow& window, Shakkar::Tetris *game);
 	PlayMenuGUI(menuGUI* parentMenu);
 
-	autoTexture background;
-	autoTexture playButton;
-	autoTexture PlayButton;
-	autoTexture exitButton;
 	menuGUI* metaMenu;
-	menuGUI* subMenu;
+	Shakkar::Tetris* plugin;
 	~PlayMenuGUI();
 
 	void Init(RenderWindow& window);
@@ -33,14 +29,5 @@ public:
 	void render(RenderWindow& window);
 
 private:
-	uint_fast8_t highlighted{};
-	const int numberOfOptions = 3;
-	bool isEntered = false;
-	enum GameState {
-		Play,
-		Settings,
-		Exit
-	};
-
 };
 #endif
