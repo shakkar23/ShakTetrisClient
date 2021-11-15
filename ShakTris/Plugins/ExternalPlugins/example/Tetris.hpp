@@ -1,12 +1,45 @@
 #pragma once
 
 #include "PieceDefs.hpp"
+#include "../../../../Platform/SDL2/headers/RenderWindow.hpp"
 #include "../../../../Platform/SDL2/headers/Game.hpp"
 #include <vector>
 
 const auto half(int i) {
     return i / 2;
 }
+const auto getRandPiece() {
+    
+
+    switch (rand() % 7)
+    {
+    case 0:
+        return PieceType::S;
+        break;
+    case 1:
+        return PieceType::Z;
+        break;
+    case 2:
+        return PieceType::J;
+        break;
+    case 3:
+        return PieceType::L;
+        break;
+    case 4:
+        return PieceType::T;
+        break;
+    case 5:
+        return PieceType::O;
+        break;
+    case 6:
+        return PieceType::I;
+        break;
+    default:
+        return PieceType::T;
+        break;
+    }
+
+};
 
 const int BOARDWIDTH = 10;
 const int BOARDHEIGHT = 20;
@@ -82,11 +115,11 @@ public:
         }
     }
 
-    void setX(const int_fast8_t setter) {
+    inline void setX(int_fast8_t setter) {
         x = setter;
         realX = setter + half(PIECEWIDTH);
     }
-    void setY(const int_fast8_t setter) {
+    inline void setY(int_fast8_t setter) {
         y = setter;
         realY = setter + half(PIECEWIDTH);
     }
@@ -119,17 +152,17 @@ public:
 
     void sonicDrop(Piece& piece) {
         while (trySoftDrop(piece))
-            ;
+            piece.setY((piece.y - 1));
         return;
     }
 
     bool trySoftDrop(Piece &piece) {
         piece.setY((piece.x-1));
         if (isCollide(piece)) {
-            piece.setY((piece.x+1));
-            return false;
+            piece.setY((piece.x+1)); // if it collided, go back up where it should be safe
+            return true;
         }
-        return true;
+        return false;
     }
 
     bool tryRotateLeft(Piece &piece) {
@@ -156,6 +189,7 @@ public:
                 }
             }
         }
+        return true;
     }
 
 
@@ -263,7 +297,8 @@ public:
             {
                 if ((((0 <= h) && (h < BOARDHEIGHT))) && (((0 <= w) && (w < BOARDWIDTH)))) //if inbounds of board
                 {
-                    board.at(w).at(h) = piece.piecedef[PieceW][PieceH];
+                    if(piece.piecedef[PieceW][PieceH] != empty)
+                        board.at(w).at(h) = piece.piecedef[PieceW][PieceH];
                 }
             }
         }
@@ -274,15 +309,27 @@ public:
         {
             for (int h = piece.y; h < PIECEHEIGHT + piece.y; h++)
             {
-                if ((((0 <= h) && (h < BOARDHEIGHT))) && (((0 <= w) && (w < BOARDWIDTH)))) //if inbounds of board
-                {
                     int x = w - piece.x;
                     int y = 4 - h + piece.y;
+                if ((((0 <= h) && (h < BOARDHEIGHT))) && (((0 <= w) && (w < BOARDWIDTH)))) //if inbounds of board
+                {
                     ColorType pieceBlock = piece.piecedef[y][x];
                     if (pieceBlock != empty) // is the cell empty in the piece matrix is empty
 
                         if (board.at(w).at(h) != empty) // is the cell in the board matrix empty
                             return true;
+                }
+                if (h < 0) // can be above, but not below the board
+                {
+                    ColorType pieceBlock = piece.piecedef[y][x];
+                    if (pieceBlock != empty)
+                        return true;
+                }
+                else if ((w < 0) || (w >= BOARDWIDTH)) // cant be out of bounds on either direction
+                {
+                    ColorType pieceBlock = piece.piecedef[y][x];
+                    if (pieceBlock != empty)
+                        return true;
                 }
             }
         }
@@ -375,8 +422,8 @@ public:
         //this->matrixBackground.Init("Asset/Sprites/exampleAssets/matrixBackground", window); //need this later
         this->background.sprite = { 0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
         this->matrix.sprite = {
-            ((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 2),
-            ((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 2),
+            ((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50 ,
+            ((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100,
             (224 * 4),
             (299 * 4)
         }; // first pixel on the matrix should be 50, 34
@@ -384,7 +431,7 @@ public:
         pieces.sprite = {0,0,24,24};
     }
 private:
-    Piece currentPiece{ PieceType::empty };
+    Piece currentPiece{ PieceType::S };
     std::vector<Piece> queue{};
     Board board;
 
@@ -401,7 +448,7 @@ Game::Game()
     queue.reserve(7);
     queue.emplace_back(Piece(PieceType::S));
     queue.emplace_back(Piece(PieceType::Z));
-    queue.emplace_back(Piece(PieceType::J));
+    queue.emplace_back(Piece(PieceType::T));
     queue.emplace_back(Piece(PieceType::L));
     queue.emplace_back(Piece(PieceType::T));
     queue.emplace_back(Piece(PieceType::O));
@@ -409,14 +456,14 @@ Game::Game()
 
 }
 
-const static uint16_t softdropCountdownMAX = 4096 * 1000; // 4096 cause thats what ppt uses according to fug
-static int32_t softdropCountdown = softdropCountdownMAX;
+const static auto softdropCountdownMAX = (4096 * (1000 /60)); // 4096 cause thats what ppt uses according to fug
+static auto softdropCountdown = softdropCountdownMAX;
 
 const static uint16_t pieceSpawnDelayMAX = UPDATES_A_SECOND;
 static int32_t pieceSpawnDelay = pieceSpawnDelayMAX;
 
 void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
-
+    
 
     if (currentPiece.kind != PieceType::empty) // we have a piece!
     {
@@ -426,6 +473,18 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
             board.setPiece(currentPiece);
             currentPiece.kind = PieceType::empty;
         }
+        if ((input.left) && !(prevInput.left))
+        {
+            currentPiece.setX(currentPiece.x - 1);
+            if (board.isCollide(currentPiece))
+                currentPiece.setX(currentPiece.x + 1);
+        }
+        if ((input.right) && !(prevInput.right))
+        {
+            currentPiece.setX(currentPiece.x + 1);
+            if (board.isCollide(currentPiece))
+                currentPiece.setX(currentPiece.x - 1);
+        }
         else {
 
 
@@ -433,9 +492,12 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
             {
                 //softdrop pls
                 if (!board.trySoftDrop(currentPiece)) {
-                    board.setPiece(currentPiece);
+                    board.setPiece(currentPiece); 
                     currentPiece.kind = PieceType::empty;
                 }
+                else 
+                    currentPiece.setY(currentPiece.y - 1);
+
                 softdropCountdown = softdropCountdownMAX;
             }
             else {
@@ -457,7 +519,7 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
         pieceSpawnDelay = pieceSpawnDelayMAX;
         currentPiece = queue.at(0);
         queue.erase(queue.begin()); 
-        queue.emplace_back(Piece(PieceType::L));      // !!! please get a new random piece here !!!
+        queue.emplace_back(Piece(getRandPiece()));
     } else 
         pieceSpawnDelay--;
     if (input.menuSelect)
@@ -467,59 +529,81 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
 void Game::render(RenderWindow& window) {
     window.render(background);
     window.render(matrix);
-    const uint16_t width_offset = ((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 2) + 50;
-    const uint16_t height_offset = ((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 2) + 34;
-    for (size_t width = 0; width < BOARDWIDTH; ++width)
+    const uint16_t width_offset = (((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50) + (50 * 4) - 1;
+    const uint16_t height_offset = (((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100) + (34 * 4) - 1; 
+    // the minus ones because otherwise https://cdn.discordapp.com/attachments/802969309260677120/909250930506080326/unknown.png
+    for (int_fast8_t height = BOARDHEIGHT - 1; height >= 0; height--)
     {
-        for (size_t height = 0; height < BOARDHEIGHT; ++height)
+        for (int_fast8_t width = 0; width < BOARDWIDTH; width++)
         {
             auto helper = [&]() {
-                pieces.sprite.x = width_offset + (width * 24);
-                pieces.sprite.y = height_offset + (height * 24);
+                
+
+                pieces.sprite.x = width_offset + (width * (24 * 2));
+                pieces.sprite.w = 16 * 3;
+                pieces.sprite.y = height_offset + ((BOARDHEIGHT- height-1) * (24 * 2));
+                pieces.sprite.h = 16 * 3;
             };
-            switch (board.board[width][height])
+            auto drawPiece = [&](ColorType block) {
+                switch (block)
+                {
+                case empty:
+                    pieces.textureRegion.x = 16;
+                    helper();
+                    break;
+                case Z:
+                    pieces.textureRegion.x = 32;
+                    break;
+                    helper();
+                case L:
+                    pieces.textureRegion.x = 48;
+                    helper();
+                    break;
+                case O:
+                    pieces.textureRegion.x = 64;
+                    helper();
+                    break;
+                case S:
+                    pieces.textureRegion.x = 80;
+                    helper();
+                    break;
+                case I:
+                    pieces.textureRegion.x = 96;
+                    helper();
+                    break;
+                case J:
+                    pieces.textureRegion.x = 112;
+                    helper();
+                    break;
+                case T:
+                    pieces.textureRegion.x = 128;
+                    helper();
+                    break;
+                case line_clear:
+                    pieces.textureRegion.x = 144;
+                    helper();
+                    break;
+                default:
+                    break;
+                }
+            };
+
+            if (((currentPiece.x <= width) && (width <= (currentPiece.x + PIECEWIDTH - 1))) && ((currentPiece.y <= height) && (height <= (currentPiece.y + PIECEHEIGHT - 1))))
             {
-            case empty:
-                pieces.textureRegion.x = 16;
-                helper();
-                break;
-            case Z:
-                pieces.textureRegion.x = 32;
-                break;
-                helper();
-            case L:
-                pieces.textureRegion.x = 48;
-                helper();
-                break;
-            case O:
-                pieces.textureRegion.x = 64;
-                helper();
-                break;
-            case S:
-                pieces.textureRegion.x = 80;
-                helper();
-                break;
-            case I:
-                pieces.textureRegion.x = 96;
-                helper();
-                break;
-            case J:
-                pieces.textureRegion.x = 112;
-                helper();
-                break;
-            case T:
-                pieces.textureRegion.x = 128;
-                helper();
-                break;
-            case line_clear:
-                pieces.textureRegion.x = 144;
-                helper();
-                break;
-            default:
-                break;
+                ColorType block = currentPiece.piecedef[4 - height + currentPiece.y][width - currentPiece.x];
+                if (block != empty)
+                    drawPiece(block);
+                else
+                    drawPiece(board.board[width][height]);
+
             }
+            else
+                drawPiece(board.board[width][height]);
+
+
             window.render(pieces);
         }
+
     }
 }
 

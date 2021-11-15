@@ -3,8 +3,8 @@
 #ifndef SHAK_GAME_MANAGER
 #define SHAK_GAME_MANAGER
 
+#include "Platform/SDL2/Menus/Menus.hpp" 
 #include "Platform/SDL2/Menus/MainMenu/MainMenu.hpp" 
-#include "Platform/SDL2/Menus/Menus.hpp"
 #include "Platform/SDL2/headers/RenderWindow.hpp"
 #include "ShakTris/Plugins/PluginManager.hpp"
 #include <thread>

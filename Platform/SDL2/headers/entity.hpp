@@ -3,14 +3,9 @@
 #ifndef SHAK_ENTITY
 #define SHAK_ENTITY
 
+#include <SDL.h>
+#include <SDL_image.h>
 
-#ifndef PLUGIN_NAME
-#include <SDL.h>
-#include <SDL_image.h>
-#else
-#include <SDL.h>
-#include <SDL_image.h>
-#endif
 #include<utility>
 #include<iostream>
 

@@ -23,7 +23,7 @@ int main(int argc, char* args[]) {
 
     RenderWindow window("Shaktris", 480, 272); // tiny window initially, will be full screenable now :sunglasses: // later hopefully
     GameManager.Init(window);
-    auto ad = (&Correct::games);
+    //auto ad = (&Correct::games);
     Shakkar::inputBitmap input;
     Shakkar::inputBitmap prevInput;
 

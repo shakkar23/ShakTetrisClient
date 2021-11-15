@@ -4,7 +4,7 @@ void gameManager::Init(RenderWindow& window) {
     loadPlugins(window);
     if (!mainMenu->isInitialized) 
         mainMenu->Init(window); 
-    auto p = (&Correct::games);
+    //auto p = (&Correct::games);
     submenuWasDeleted = false;
 }
 

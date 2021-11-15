@@ -29,9 +29,9 @@ public:
 	menuGUI* subMenu;
 	~mainMenuGUI();
 
-	void Init(RenderWindow &window);
-	void menuLogic(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow &window);
+	void Init(RenderWindow &window) override;
+	void menuLogic(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput) override;
+	void render(RenderWindow &window) override;
 	
 private:
 	uint_fast8_t highlighted{};

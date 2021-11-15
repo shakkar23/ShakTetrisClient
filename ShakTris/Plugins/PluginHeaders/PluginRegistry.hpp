@@ -16,9 +16,6 @@
         }                                                                                                \
     void namespaceName::initializePlugin(void *window)
 
-namespace Correct {
-    extern std::vector<Shakkar::Tetris*> games;
-};
 namespace Shakkar {
     using std::derived_from;
     //tamplate stuff to make sure they are definitely being derived from my base class with nothing in it

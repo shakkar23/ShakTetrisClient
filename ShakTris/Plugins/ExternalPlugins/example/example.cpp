@@ -32,12 +32,8 @@ void demo::render(RenderWindow& window)  {
 
 PLUGIN_SETUP("example", "Shakkar23", "ok so basically this is an example and its for example purposes, and its an example that is used for being an example") {
     printf("initializing example plugin...\n");
-    auto  prev = Shakkar::Plugins::getEntries().size();
+    
     Shakkar::Plugins::addorig<demo>();
-    printf("%d\n", Shakkar::Plugins::getEntries().empty());
-    auto cur = Shakkar::Plugins::getEntries().size();
-    if(cur != prev)
-        Shakkar::Plugins::getEntries().back()->Init((*(RenderWindow*)window));
-    auto p = (&Correct::games);
+    Shakkar::Plugins::getEntries().back()->Init((*(RenderWindow*)window));
     
 }
