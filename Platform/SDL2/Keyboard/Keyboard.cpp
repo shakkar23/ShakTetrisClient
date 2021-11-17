@@ -43,7 +43,7 @@ namespace Shakkar {
                 input.setHardDrop();
             }
             
-            if (scan == SDL_Scancode::SDL_SCANCODE_W)
+            if (scan == SDL_Scancode::SDL_SCANCODE_S)
             {
                 input.setSoftDrop();
             }

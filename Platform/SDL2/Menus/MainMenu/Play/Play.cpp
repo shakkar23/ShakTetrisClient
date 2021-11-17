@@ -14,6 +14,7 @@ PlayMenuGUI::PlayMenuGUI(menuGUI* parentMenu) {
 	}
 	else
 		 this->plugin = Shakkar::Plugins::getEntries().back();
+	pluginReInit = !plugin->isPlaying; // if we are not playing, but the plugin does exist, reload it
 }
 PlayMenuGUI::~PlayMenuGUI() {
 	
@@ -30,8 +31,9 @@ void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 		metaMenu->submenuWasDeleted = true;
 		delete this;
 	}
+	else if (pluginReInit)
+		;
 	else if (!plugin->isPlaying) {
-		plugin = nullptr;
 		metaMenu->submenuWasDeleted = true;
 		delete this;
 	}
@@ -40,7 +42,10 @@ void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 }
 
 void PlayMenuGUI::render(RenderWindow& window) {
-
+	if (pluginReInit) {
+		plugin->Init(window);
+		pluginReInit = false;
+	}
 	plugin->render(window);
 
 }

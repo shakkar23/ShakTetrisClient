@@ -3,15 +3,16 @@
 #include "PieceDefs.hpp"
 #include "../../../../Platform/SDL2/headers/RenderWindow.hpp"
 #include "../../../../Platform/SDL2/headers/Game.hpp"
+#include "ppt.h"
 #include <vector>
 
-const auto half(int i) {
+constexpr int half(int i) {
     return i / 2;
 }
 const auto getRandPiece() {
     
 
-    switch (rand() % 7)
+    switch (pptRand() % 7)
     {
     case 0:
         return PieceType::S;
@@ -67,13 +68,13 @@ public:
         case North:
             break;
         case East:
-            rotatePieceMatrixRight();
+            rotatePieceMatrixLeft();
             break;
         case South:
-            rotatePieceMatrixRight(); rotatePieceMatrixRight();
+            rotatePieceMatrixLeft(); rotatePieceMatrixLeft();
             break;
         case West:
-            rotatePieceMatrixRight(); rotatePieceMatrixRight(); rotatePieceMatrixRight();
+            rotatePieceMatrixLeft(); rotatePieceMatrixLeft(); rotatePieceMatrixLeft();
             break;
         default:
             break;
@@ -87,7 +88,7 @@ public:
     friend Board;
 
     //rotates the piece 90 degrees to the right
-    void rotatePieceMatrixRight()
+    void rotatePieceMatrixLeft()
     {
         // Consider all squares one by one
         for (int x = 0; x < PIECEWIDTHANDHEIGHT / 2; x++) {
@@ -141,28 +142,31 @@ class Board {
 public:
 
     Board() {
-        for (size_t w = 0; w < BOARDWIDTH; w++)
+        clear();
+    }
+    void clear() {
+        for (auto &width : board)
         {
-            for (size_t h = 0; h < BOARDHEIGHT; h++)
+            for (auto &cell : width)
             {
-                board.at(w).at(h) = empty;
+                cell = empty;
             }
         }
-    }
+    };
 
     void sonicDrop(Piece& piece) {
         while (trySoftDrop(piece))
-            piece.setY((piece.y - 1));
+            ;
         return;
     }
 
     bool trySoftDrop(Piece &piece) {
-        piece.setY((piece.x-1));
+        piece.setY(piece.y-1);
         if (isCollide(piece)) {
-            piece.setY((piece.x+1)); // if it collided, go back up where it should be safe
-            return true;
+            piece.setY(piece.y+1); // if it collided, go back up where it should be safe
+            return false;
         }
-        return false;
+        return true;
     }
 
     bool tryRotateLeft(Piece &piece) {
@@ -171,9 +175,9 @@ public:
         // rotate the piece definition left first
         // this is to test if we can even rotate it in the first place
         // need to rotate it back if fails 
-        piece.rotatePieceMatrixRight();
-        piece.rotatePieceMatrixRight();
-        piece.rotatePieceMatrixRight();
+        piece.rotatePieceMatrixLeft();
+        piece.rotatePieceMatrixLeft();
+        piece.rotatePieceMatrixLeft();
         for (int h = piece.y, PieceW = PIECEHEIGHT - 1; h < PIECEHEIGHT + piece.y; h++, PieceW--)// subtract the width cause yes, it makes adding go up, due to the nautre of how to display arrays visually
         {
             for (int w = piece.x, PieceH = 0; w < PIECEWIDTH + piece.x; w++, PieceH++)
@@ -183,7 +187,7 @@ public:
                     if ((board.at(w).at(h) != ColorType::empty) && (piece.piecedef[PieceW][PieceH] != ColorType::empty))
                         continue;
                     else {
-                        piece.rotatePieceMatrixRight();
+                        piece.rotatePieceMatrixLeft();
                         return false;
                     }
                 }
@@ -193,7 +197,7 @@ public:
     }
 
 
-    bool tryRotate(Piece &piece, TurnDirection direction) {
+    bool tryRotate(Piece& piece, TurnDirection direction) {
         auto incrRot = [&]() {
             switch (piece.spin)
             {
@@ -209,27 +213,26 @@ public:
             case West:
                 piece.spin = North;
                 break;
-            case number_of_RotationDirections:
-                break;
             default:
                 break;
             }
         };
+        // temporary x and y to know their initial location
         int_fast8_t x = piece.x; int_fast8_t y = piece.y;
-        constexpr bool srs_plus = false;
-        //
         if (direction == Right)
-            piece.rotatePieceMatrixRight();
+        {
+            piece.rotatePieceMatrixLeft();
+            piece.rotatePieceMatrixLeft();
+            piece.rotatePieceMatrixLeft();
+        }
         else if (direction == Left)
         {
-            piece.rotatePieceMatrixRight();
-            piece.rotatePieceMatrixRight();
-            piece.rotatePieceMatrixRight();
+            piece.rotatePieceMatrixLeft();
         }
         else if (direction == oneEighty)
         {
-            piece.rotatePieceMatrixRight();
-            piece.rotatePieceMatrixRight();
+            piece.rotatePieceMatrixLeft();
+            piece.rotatePieceMatrixLeft();
         }
 
         // spinclockwise should be a bool, but it can also be 2 as in rotating twice
@@ -238,7 +241,7 @@ public:
             const int(*pdata)[kicks][2] = wallkickdata[piece.spin];
 
             if (piece.kind == PieceType::I)
-                pdata = srs_plus ? srsplusIwallkickdata[piece.spin] : Iwallkickdata[piece.spin];
+                pdata = Iwallkickdata[piece.spin];
             for (int iter_rot = 0; iter_rot < kicks; ++iter_rot) {
                 piece.setX(x + (pdata[direction][iter_rot][0]));
                 piece.setY(y + (pdata[direction][iter_rot][1]));
@@ -276,16 +279,18 @@ public:
 
         //rotate the matrix back if nothing worked
         if (direction == Right) {
-            piece.rotatePieceMatrixRight();
-            piece.rotatePieceMatrixRight();
-            piece.rotatePieceMatrixRight();
+            piece.rotatePieceMatrixLeft();
         }
         else if (direction == Left)
-            piece.rotatePieceMatrixRight();
+        {
+            piece.rotatePieceMatrixLeft();
+            piece.rotatePieceMatrixLeft();
+            piece.rotatePieceMatrixLeft();
+        }
         else if (direction == oneEighty)
         {
-            piece.rotatePieceMatrixRight();
-            piece.rotatePieceMatrixRight();
+            piece.rotatePieceMatrixLeft();
+            piece.rotatePieceMatrixLeft();
         }
         return false;
     }
@@ -430,8 +435,19 @@ public:
         pieces.textureRegion = {0, 0, 16, 16};
         pieces.sprite = {0,0,24,24};
     }
+    void reload() {
+
+        board.clear();
+        queue.clear();
+        queue.reserve(7);
+        forceReRollBag();
+        currentPiece = Piece(getRandPiece());
+        for (size_t i = 0; i < 7; i++)
+            queue.emplace_back(Piece(getRandPiece()));
+
+    }
 private:
-    Piece currentPiece{ PieceType::S };
+    Piece currentPiece{ getRandPiece() };
     std::vector<Piece> queue{};
     Board board;
 
@@ -446,13 +462,8 @@ Game::Game()
     printf("example initialized");
     //temp pieces
     queue.reserve(7);
-    queue.emplace_back(Piece(PieceType::S));
-    queue.emplace_back(Piece(PieceType::Z));
-    queue.emplace_back(Piece(PieceType::T));
-    queue.emplace_back(Piece(PieceType::L));
-    queue.emplace_back(Piece(PieceType::T));
-    queue.emplace_back(Piece(PieceType::O));
-    queue.emplace_back(Piece(PieceType::I));
+    for (size_t i = 0; i < 7; i++)
+        queue.emplace_back(Piece(getRandPiece()));
 
 }
 
@@ -467,19 +478,19 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
 
     if (currentPiece.kind != PieceType::empty) // we have a piece!
     {
-        if ((input.hardDrop) && !(prevInput.hardDrop))
+        if (justPressed(prevInput.hardDrop, input.hardDrop))
         {
             board.sonicDrop(currentPiece);
             board.setPiece(currentPiece);
             currentPiece.kind = PieceType::empty;
         }
-        if ((input.left) && !(prevInput.left))
+        if (justPressed(prevInput.left, input.left))
         {
             currentPiece.setX(currentPiece.x - 1);
             if (board.isCollide(currentPiece))
                 currentPiece.setX(currentPiece.x + 1);
         }
-        if ((input.right) && !(prevInput.right))
+        if (justPressed(prevInput.right, input.right))
         {
             currentPiece.setX(currentPiece.x + 1);
             if (board.isCollide(currentPiece))
@@ -495,23 +506,20 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
                     board.setPiece(currentPiece); 
                     currentPiece.kind = PieceType::empty;
                 }
-                else 
-                    currentPiece.setY(currentPiece.y - 1);
 
                 softdropCountdown = softdropCountdownMAX;
             }
             else {
                 // 20 is another number ppt uses according to fug, and the 60 is for the updates a second ppt uses in their game
                 if (input.softDrop)
-                    softdropCountdown -= (20 * (UPDATES_A_SECOND / 60));
+                    softdropCountdown -= (25 * (UPDATES_A_SECOND / 60));
                 else
-                    softdropCountdown-= (UPDATES_A_SECOND / 60);
+                    softdropCountdown -= (UPDATES_A_SECOND / 60);
             }
 
-
-            if ((!prevInput.rotLeft) && (input.rotLeft))
-                board.tryRotate(currentPiece, TurnDirection::Left);
-            else if ((!prevInput.rotRight) && (input.rotRight))
+            if (justPressed(prevInput.rotLeft, input.rotLeft))
+                board.tryRotate(currentPiece, TurnDirection::Left); 
+            else if (justPressed(prevInput.rotRight, input.rotRight))
                 board.tryRotate(currentPiece, TurnDirection::Right);
 
         }
@@ -522,8 +530,7 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
         queue.emplace_back(Piece(getRandPiece()));
     } else 
         pieceSpawnDelay--;
-    if (input.menuSelect)
-        ; // delete game
+    
 }
 
 void Game::render(RenderWindow& window) {
@@ -553,8 +560,8 @@ void Game::render(RenderWindow& window) {
                     break;
                 case Z:
                     pieces.textureRegion.x = 32;
-                    break;
                     helper();
+                    break;
                 case L:
                     pieces.textureRegion.x = 48;
                     helper();
@@ -609,5 +616,5 @@ void Game::render(RenderWindow& window) {
 
 Game::~Game()
 {
-
+    
 }

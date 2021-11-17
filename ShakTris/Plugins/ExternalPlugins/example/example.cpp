@@ -10,15 +10,21 @@ demo::demo() : Shakkar::Tetris("bruh") {
 }
 void demo::Init(RenderWindow& window) {
     game.Init(window);
+
+    //handling the fact that this is also simultaneously the ReInit() function, TODO: change later for it to be a stand alone function
+    if (this->alreadyInitialized) {
+        game.reload();
+        isPlaying = true;
+    }
+
+    this->alreadyInitialized = true;
+
 }
 
-static int iter{};
 void demo::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
-    if (iter != 2500) // game starting delay, except I suck
-    {
-        iter++;
-        return;
-    }
+    
+    if ((!prevInput.menuSelect) && (input.menuSelect))
+        isPlaying = false;
 
     game.gameLogic(input, prevInput);
 }

@@ -69,7 +69,7 @@ enum TurnDirection : uint_fast8_t {
 
 // note: for some reason the piece definition is [piecetype][PIECEHEIGHT - 1 - y][x]
 // everything else in the repo accounts for this, so there is no point in changing it as of writing this note, ¯\_(ツ)_ /¯
-const ColorType PieceDefinition[(int)PieceType::number_of_PieceTypes][PIECEWIDTH][PIECEHEIGHT] = {
+constexpr ColorType PieceDefinition[(int)PieceType::number_of_PieceTypes][PIECEWIDTH][PIECEHEIGHT] = {
     // the /**/ is to indicate the center of the definition, I thought it was clever 
 
     {//S

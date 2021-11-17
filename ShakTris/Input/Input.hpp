@@ -54,5 +54,5 @@ namespace Shakkar {
     private:
     };
 };
-
+constexpr bool justPressed(bool prevInput, bool input) { return (!prevInput && input); }
 #endif

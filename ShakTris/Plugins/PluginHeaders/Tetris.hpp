@@ -15,6 +15,8 @@ namespace Shakkar {
         explicit Tetris(const std::string &unlocalizedTetrisName): m_unlocalizedTetrisName(unlocalizedTetrisName){}
         virtual void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) = 0;
         virtual void render(RenderWindow& window) = 0;
+        //this needs to reload the game when called after the first time called
+        // TODO: change later for reloading to be a stand alone function
         virtual void Init(RenderWindow& window) = 0;
         bool isPlaying = false;
     private:

@@ -29,5 +29,6 @@ public:
 	void render(RenderWindow& window);
 
 private:
+	bool pluginReInit = false;
 };
 #endif
