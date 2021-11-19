@@ -145,15 +145,50 @@ public:
         clear();
     }
     void clear() {
-        for (auto &width : board)
+        for (auto& width : board)
         {
-            for (auto &cell : width)
+            for (auto& cell : width)
             {
                 cell = empty;
             }
         }
+    }
+    void clearLines() {
+        for (size_t h = 0; h < BOARDHEIGHT; h++)
+        {
+            for (size_t w = 0; w < BOARDWIDTH; w++)
+            {
+                if (board.at(w).at(h) == empty)
+                    break;
+                if (w == BOARDWIDTH - 1) {
+                    clearLine(h);
+                    h--;
+                }
+            }
+        }
     };
+    void clearLine(uint_fast8_t whichLine) {
+        if (whichLine >= BOARDHEIGHT)
+            whichLine = BOARDHEIGHT - 1;
+        for (size_t i = 0; i < BOARDWIDTH; i++)
+        {
+            board.at(i).at(whichLine) = empty;
+        }
+        for (size_t w = 0; w < BOARDWIDTH; w++)
+        {
+            for (size_t h = whichLine; h < BOARDHEIGHT; h++)
+            {
+                if (h == (BOARDHEIGHT - 1))
+                {
+                    board.at(w).at(h) = empty;
+                    break;
+                }
+                else
+                    board.at(w).at(h) = board.at(w).at(h + 1);
+            }
 
+        }
+    }
     void sonicDrop(Piece& piece) {
         while (trySoftDrop(piece))
             ;
@@ -198,6 +233,8 @@ public:
 
 
     bool tryRotate(Piece& piece, TurnDirection direction) {
+        if (piece.kind == PieceType::O)
+            return true;
         auto incrRot = [&]() {
             switch (piece.spin)
             {
@@ -447,6 +484,53 @@ public:
 
     }
 private:
+        const uint16_t dasSetting = 80; // these are in miliseconds
+        const uint16_t arrSetting = 0;
+        uint16_t dasIterator = 0;
+        uint16_t arrIterator = 0;
+    bool tryMovePiece(MoveDirection direction, bool JustPressed) {
+
+        int offset{};
+        if (direction == MoveDirection::Left)
+            offset = -1;
+        else
+            offset = 1;
+
+        if (JustPressed) {
+            dasIterator = 0;
+            arrIterator = 0;
+            currentPiece.setX(currentPiece.x + offset);
+            if (board.isCollide(currentPiece))
+            {
+                currentPiece.setX(currentPiece.x - offset); // failed, go back
+                return false;
+            }
+            else
+                return true;
+            
+        }
+
+        if (dasIterator >= dasSetting) {
+            // success! now try to das
+            if (arrIterator >= arrSetting)
+            {
+                arrIterator = 0;
+                currentPiece.setX(currentPiece.x + offset);
+                if (board.isCollide(currentPiece))
+                {
+                    currentPiece.setX(currentPiece.x - offset); // failed, go back
+                    return false;
+                }
+                else
+                    return true;
+            }else
+                arrIterator++;
+        }else 
+        dasIterator++;
+
+        return false;
+    }
+    Piece hold{PieceType::empty};
     Piece currentPiece{ getRandPiece() };
     std::vector<Piece> queue{};
     Board board;
@@ -470,11 +554,25 @@ Game::Game()
 const static auto softdropCountdownMAX = (4096 * (1000 /60)); // 4096 cause thats what ppt uses according to fug
 static auto softdropCountdown = softdropCountdownMAX;
 
-const static uint16_t pieceSpawnDelayMAX = UPDATES_A_SECOND;
+const static uint16_t pieceSpawnDelayMAX = 0;
 static int32_t pieceSpawnDelay = pieceSpawnDelayMAX;
 
+bool leftState{};
+bool rightState{};
+
+bool checkForLineClear{};
+
+uint16_t lockDelayIncrementer{};
+const uint_fast16_t lockDelayMAX = (UPDATES_A_SECOND / 2);
+
+
 void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
-    
+    if (checkForLineClear) {
+        board.clearLines(); 
+        checkForLineClear = false;
+    }
+    leftState = rightState ? false : input.left;
+    rightState = leftState ? false : input.right;
 
     if (currentPiece.kind != PieceType::empty) // we have a piece!
     {
@@ -483,59 +581,71 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
             board.sonicDrop(currentPiece);
             board.setPiece(currentPiece);
             currentPiece.kind = PieceType::empty;
+            checkForLineClear = true;
         }
-        if (justPressed(prevInput.left, input.left))
+
+        if (leftState)
         {
-            currentPiece.setX(currentPiece.x - 1);
-            if (board.isCollide(currentPiece))
-                currentPiece.setX(currentPiece.x + 1);
-        }
-        if (justPressed(prevInput.right, input.right))
+            tryMovePiece(MoveDirection::Left, !prevInput.left);
+        }else if (rightState)
         {
-            currentPiece.setX(currentPiece.x + 1);
-            if (board.isCollide(currentPiece))
-                currentPiece.setX(currentPiece.x - 1);
+            tryMovePiece(MoveDirection::Right, !prevInput.right);
         }
-        else {
+
+        {
 
 
             if (softdropCountdown <= 0)
             {
                 //softdrop pls
                 if (!board.trySoftDrop(currentPiece)) {
-                    board.setPiece(currentPiece); 
-                    currentPiece.kind = PieceType::empty;
-                }
-
-                softdropCountdown = softdropCountdownMAX;
+                    //failed, we are on the ground
+                    if (lockDelayIncrementer >= lockDelayMAX)
+                    {
+                        board.setPiece(currentPiece);
+                        currentPiece.kind = PieceType::empty;
+                        checkForLineClear = true;
+                        lockDelayIncrementer = 0;
+                    }
+                    else 
+                        lockDelayIncrementer++;
+                   
+                }else 
+                    softdropCountdown = softdropCountdownMAX;
             }
             else {
-                // 20 is another number ppt uses according to fug, and the 60 is for the updates a second ppt uses in their game
+                
                 if (input.softDrop)
-                    softdropCountdown -= (25 * (UPDATES_A_SECOND / 60));
+                    softdropCountdown -= (20 * (UPDATES_A_SECOND / 60));
                 else
                     softdropCountdown -= (UPDATES_A_SECOND / 60);
             }
 
             if (justPressed(prevInput.rotLeft, input.rotLeft))
-                board.tryRotate(currentPiece, TurnDirection::Left); 
+                board.tryRotate(currentPiece, TurnDirection::Left);
             else if (justPressed(prevInput.rotRight, input.rotRight))
                 board.tryRotate(currentPiece, TurnDirection::Right);
+            else if (justPressed(prevInput.rot180, input.rot180))
+                board.tryRotate(currentPiece, TurnDirection::oneEighty);
 
         }
     } else if (pieceSpawnDelay <= 0) { //guarenteed no piece
         pieceSpawnDelay = pieceSpawnDelayMAX;
+        softdropCountdown = softdropCountdownMAX;
         currentPiece = queue.at(0);
         queue.erase(queue.begin()); 
         queue.emplace_back(Piece(getRandPiece()));
+        leftState = false;
+        rightState = false;
+        checkForLineClear = false;
     } else 
         pieceSpawnDelay--;
-    
 }
 
 void Game::render(RenderWindow& window) {
     window.render(background);
     window.render(matrix);
+    //
     const uint16_t width_offset = (((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50) + (50 * 4) - 1;
     const uint16_t height_offset = (((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100) + (34 * 4) - 1; 
     // the minus ones because otherwise https://cdn.discordapp.com/attachments/802969309260677120/909250930506080326/unknown.png
@@ -598,7 +708,7 @@ void Game::render(RenderWindow& window) {
             if (((currentPiece.x <= width) && (width <= (currentPiece.x + PIECEWIDTH - 1))) && ((currentPiece.y <= height) && (height <= (currentPiece.y + PIECEHEIGHT - 1))))
             {
                 ColorType block = currentPiece.piecedef[4 - height + currentPiece.y][width - currentPiece.x];
-                if (block != empty)
+                if ((block != empty) && currentPiece.kind != PieceType::empty)
                     drawPiece(block);
                 else
                     drawPiece(board.board[width][height]);

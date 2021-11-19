@@ -66,6 +66,11 @@ enum TurnDirection : uint_fast8_t {
     number_of_TurnDirections,
     oneEighty,
 };
+enum class MoveDirection : uint_fast8_t {
+    Left,
+    Right,
+    number_of_MoveDirections,
+};
 
 // note: for some reason the piece definition is [piecetype][PIECEHEIGHT - 1 - y][x]
 // everything else in the repo accounts for this, so there is no point in changing it as of writing this note, ¯\_(ツ)_ /¯

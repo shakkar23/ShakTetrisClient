@@ -6,7 +6,7 @@
 const int kicks = 5;
 
 //number of kicks misamino 180 has not counting for initial
-const int kicks180 = 5;
+const int kicks180 = 12;
 
 //left and right
 //these are the only directions you can turn towards not including 180 due to it being a special case
@@ -24,6 +24,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     // North
                     {
                         // West
+                        {0,  -1},
                         {-1, 0},
                         {2, 0},
                         {-1, 2},
@@ -31,6 +32,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     },
                     {
                         // East
+                        {1,  0},
                         {-2, 0},
                         {1, 0},
                         {-2, -1},
@@ -41,6 +43,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     // East
                     {
                         // North
+                        {-1,  0},
                         {2, 0},
                         {-1, 0},
                         {2, 1},
@@ -48,6 +51,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     },
                     {
                         // South
+                        {0,  -1},
                         {-1, 0},
                         {2, 0},
                         {-1, 2},
@@ -58,6 +62,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     // South
                     {
                         // East
+                        {0,  1},
                         {1, 0},
                         {-2, 0},
                         {1, -2},
@@ -65,6 +70,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     },
                     {
                         // West
+                        {-1,  0},
                         {2, 0},
                         {-1, 0},
                         {2, 1},
@@ -75,6 +81,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     // West
                     {
                         // South
+                        {1,  0},
                         {-2, 0},
                         {1, 0},
                         {-2, -1},
@@ -82,6 +89,7 @@ const int Iwallkickdata[number_of_RotationDirections][turnDirections][kicks][2] 
                     },
                     {
                         // North
+                        {0,  1},
                         {1, 0},
                         {-2, 0},
                         {1, -2},
@@ -245,52 +253,31 @@ const int wallkickdata[number_of_RotationDirections][turnDirections][kicks][2] =
         },
     },
 };
-const int Iwallkick180data[number_of_RotationDirections][kicks180][2] = { {// North -> South
-                                        {0, 1},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0}},
+const int Iwallkick180data[number_of_RotationDirections][kicks180][2] = { {
+                                        // North -> South
+                                        {1,-1}, {-1, 0},{-2, 0},{ 1, 0},{ 2, 0},{ 0, 1}
+                                        },
                                        {// East -> West
-                                        {-1, 0},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0}},
+                                         {-1,-1},{ 0, 1},{ 0, 2},{ 0,-1},{ 0,-2},{-1, 0}
+                                       },
                                        {// South -> North
-                                        {0, -1},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0}},
+                                         {-1,1},{ 1, 0},{ 2, 0},{-1, 0},{-2, 0},{ 0,-1}
+                                       },
                                        {// West -> East
-                                        {1, 0},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0},
-                                        {0, 0}} };
+                                         {1,1},{ 0, 1},{ 0, 2},{ 0,-1},{ 0,-2},{ 1, 0}
+                                       } 
+};
 const int wallkick180data[number_of_RotationDirections][kicks180][2] = {
                                       {// North -> South
-                                       {0, 1},
-                                       {-1, 1},
-                                       {1, 1},
-                                       {-1, 0},
-                                       {1, 0}},
+                                       {0, 0},{ 1, 0},{ 2, 0},{ 1, 1},{ 2, 1},{-1, 0},{-2, 0},{-1, 1},{-2, 1},{ 0,-1},{ 3, 0},{-3, 0}
+                                      },
                                       {// East -> West
-                                       {-1, 0},
-                                       {-1, 2},
-                                       {-1, 1},
-                                       {0, 2},
-                                       {0, 1}},
+                                       {0, 0},{ 0, 1},{ 0, 2},{-1, 1},{-1, 2},{ 0,-1},{ 0,-2},{-1,-1},{-1,-2},{ 1, 0},{ 0, 3},{ 0,-3}
+                                      },
                                       {// South -> North
-                                       {0, -1},
-                                       {1, -1},
-                                       {-1, 1},
-                                       {1, 0},
-                                       {-1, 0}},
+                                       {0, 0},{-1, 0},{-2, 0},{-1,-1},{-2,-1},{ 1, 0},{ 2, 0},{ 1,-1},{ 2,-1},{ 0, 1},{-3, 0},{ 3, 0}
+                                      },
                                       {// West -> East
-                                       {1, 0},
-                                       {1, 2},
-                                       {1, 1},
-                                       {0, 2},
-                                       {0, 1}} };
+                                       {0, 0},{ 0, 1},{ 0, 2},{ 1, 1},{ 1, 2},{ 0,-1},{ 0,-2},{ 1,-1},{ 1,-2},{-1, 0},{ 0, 3},{ 0,-3}
+                                      }
+};
