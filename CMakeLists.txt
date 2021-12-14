@@ -26,7 +26,7 @@ set(PLUGINS
 
 set(GAME_SOURCES
 	"${SRC}/ShakTetrisClient.cpp"
-
+	
 	"${SRC}/ShakTris/Input/Input.cpp"
 	"${SRC}/ShakTris/Plugins/PluginHeaders/Tetris.cpp"
 )

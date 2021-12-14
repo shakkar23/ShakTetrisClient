@@ -8,6 +8,7 @@ set(PLATFORM_SOURCES
 	"${SRC}/Platform/SDL2/Menus/Menus.cpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/MainMenu.cpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Play/Play.cpp"
+	"${SRC}/Platform/SDL2/Menus/MainMenu/Selection/Selection.cpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Settings/Settings.cpp"
 	"${SRC}/Platform/SDL2/gameManager/gameManager.cpp"
 )
@@ -20,6 +21,7 @@ set(PLATFORM_HEADERS
 	"${SRC}/Platform/SDL2/Menus/Menus.hpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/MainMenu.hpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Play/Play.hpp"
+	"${SRC}/Platform/SDL2/Menus/MainMenu/Selection/Selection.hpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Settings/Settings.hpp"
 	"${SRC}/Platform/SDL2/gameManager/gameManager.hpp"
 	)

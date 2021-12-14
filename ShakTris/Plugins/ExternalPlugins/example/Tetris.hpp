@@ -204,7 +204,7 @@ public:
         return true;
     }
 
-    bool tryRotateLeft(Piece &piece) {
+    [[deprecated]] bool tryRotateLeft(Piece &piece) {
         if (piece.kind == PieceType::O)
             return true;
         // rotate the piece definition left first
@@ -333,6 +333,7 @@ public:
     }
 
     void setPiece(const Piece &piece) {
+        new Shakkar::autoAudio("Asset/Sounds/Sound.wav", (128/5));
         for (int h = piece.y, PieceW = PIECEHEIGHT - 1; h < PIECEHEIGHT + piece.y; h++, PieceW--)// subtract the width cause yes, it makes adding go up, due to the nautre of how to display arrays visually
         {
             for (int w = piece.x, PieceH = 0; w < PIECEWIDTH + piece.x; w++, PieceH++)

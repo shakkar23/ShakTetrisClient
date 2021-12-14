@@ -72,6 +72,61 @@ std::string Plugin::getPluginDescription() const {
         return "Unknown Description";
 }
 
+
+Uint32 AudioManager::wav_length = {}; // length of our sample
+Uint8* AudioManager::wav_buffer = {}; // buffer containing our audio file
+
+SDL_AudioSpec AudioManager::wav_spec = {}; // the specs of our piece of music
+AudioManager::~AudioManager() {
+    SDL_FreeWAV(wav_buffer);
+}
+AudioManager::AudioManager() {
+    // make a wav file to be called forever, imm abusing the forever part for cool things and such
+    // notice that im not actually playing it, its just for the side affect of being called forever
+    if (SDL_LoadWAV(mus2, &wav_spec, &wav_buffer, &wav_length) == NULL) {
+        printf("couldnt load music");
+    }
+
+    wav_spec.callback = callback;
+
+    /* Open the audio device */
+    SDL_OpenAudio(&wav_spec, NULL);
+
+    /* Start playing */
+    SDL_PauseAudio(0);
+}
+
+void AudioManager::callback(void* userdata, Uint8* stream, int len) {
+    //old code i want to keep
+    // // simply copy from one buffer into the other
+    //SDL_memcpy (stream, audio_pos, len); 		
+    //SDL_MixAudio(stream, audio_pos, len, SDL_MIX_MAXVOLUME / 8);// mix from one buffer into another
+
+    const int length = len;
+
+    //empty the stream, as it is not done by default :(
+    //128 is actual silence
+    SDL_memset(stream, 128, length);
+    for (auto audio = Shakkar::autoAudio::audios.begin(); audio != Shakkar::autoAudio::audios.end();) {
+        if (((*audio)->audio_len == 0) || ((*audio)->audio_len == 1))
+        {
+            delete (*audio);
+            audio = Shakkar::autoAudio::audios.erase(audio);
+        }
+        else {
+            const int bounds = (length > (*audio)->audio_len ? ((*audio)->audio_len - 1) : length);
+            //SDL_memcpy (stream, audio_pos, len); 					// simply copy from one buffer into the other
+            SDL_MixAudio(stream, (*audio)->audio_pos, bounds, (*audio)->volume);// mix from one buffer into another
+
+            (*audio)->audio_pos += bounds;
+            (*audio)->audio_len -= bounds;
+
+            ++audio;
+        }
+    }
+
+}
+
 bool PluginManager::load(std::string_view pluginFolder) {
     if (!std::filesystem::exists(pluginFolder))
     {

@@ -14,6 +14,8 @@
 
 
 int main(int argc, char* args[]) {
+    if (SDL_Init(SDL_INIT_AUDIO) < 0)
+        return 1;
     if (SDL_Init(SDL_INIT_VIDEO) > 0)
         std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
         << std::endl;
@@ -21,8 +23,9 @@ int main(int argc, char* args[]) {
     if (!(IMG_Init(IMG_INIT_PNG)))
         std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
 
-    RenderWindow window("Shaktris", 480, 272); // tiny window initially, will be full screenable now :sunglasses: // later hopefully
+    RenderWindow window("Shaktris", 480 * 2, 272 * 2); // tiny window initially, will be full screenable now :sunglasses: // later hopefully
     GameManager.Init(window);
+    AudioManager manager;
     //auto ad = (&Correct::games);
     Shakkar::inputBitmap input;
     Shakkar::inputBitmap prevInput;
@@ -75,7 +78,7 @@ int main(int argc, char* args[]) {
                 const auto now = SDL_GetPerformanceCounter();
                 alpha += (double)((double)(now - last_time) / SDL_GetPerformanceFrequency() * UPDATES_A_SECOND);
                 last_time = now;
-                
+
                 while (alpha > 1.0) {
                     if (!GameManager.gameLogic(input, prevInput)) {
                         gameRunning = false;
@@ -94,7 +97,7 @@ int main(int argc, char* args[]) {
 
             }
             else {
-                constexpr int FRAME_RATE = (int) ((1.0 / 60.0) * 1000); // time spent in a frame in ms
+                constexpr int FRAME_RATE = (int)((1.0 / 60.0) * 1000); // time spent in a frame in ms
                 int32_t ticks = SDL_GetTicks() % (FRAME_RATE);
                 if ((ticks) == 0) {
                     if (!GameManager.gameLogic(input, prevInput))

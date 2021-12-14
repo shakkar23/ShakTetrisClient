@@ -35,12 +35,12 @@ public:
 	
 private:
 	uint_fast8_t highlighted{};
-	const int numberOfOptions = 3;
 	bool isEntered = false;
 	enum GameState {
 		Play,
 		Settings,
-		Exit
+		Exit,
+		numberOfOptions
 	};
 };
 

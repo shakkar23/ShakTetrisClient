@@ -1,6 +1,6 @@
-#include "Play.hpp"
+#include "Selection.hpp"
 
-PlayMenuGUI::PlayMenuGUI(menuGUI* parentMenu) {
+SelectionGUI::SelectionGUI(menuGUI* parentMenu) {
 	isInitialized = false;
 	this->metaMenu = parentMenu;
 	auto plugins = Shakkar::Plugins::getEntries().size();
@@ -16,16 +16,16 @@ PlayMenuGUI::PlayMenuGUI(menuGUI* parentMenu) {
 		 this->plugin = Shakkar::Plugins::getEntries().back();
 	pluginReInit = !plugin->isPlaying; // if we are not playing, but the plugin does exist, reload it
 }
-PlayMenuGUI::~PlayMenuGUI() {
+SelectionGUI::~SelectionGUI() {
 	
 }
 //grabs a plugin from the entries that are registered
-void PlayMenuGUI::Init(RenderWindow& window) {
+void SelectionGUI::Init(RenderWindow& window) {
 	this->plugin = Shakkar::Plugins::getEntries().at(0);
 	return;
 }
 
-void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+void SelectionGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
 	// in this scenario the top option is 0, and you increment to go down
 
 	if (this->plugin == nullptr) {
@@ -42,7 +42,7 @@ void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 
 }
 
-void PlayMenuGUI::render(RenderWindow& window) {
+void SelectionGUI::render(RenderWindow& window) {
 	if (pluginReInit) {
 		plugin->Init(window);
 		pluginReInit = false;

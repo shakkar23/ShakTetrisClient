@@ -78,18 +78,18 @@ public:
 // returns a piece 
 uint32_t pptRand() {
   
-    uint32_t temp{};
+    uint32_t next{};
     if (bagiterator == 7) {
         //make new bag
         bagiterator = 0;
         ppt.makebag();
-        temp = ppt.bag[bagiterator];
+        next = ppt.bag[bagiterator];
         bagiterator++;
-        return temp;
+        return next;
     } else {
-       temp = ppt.bag[bagiterator];
+       next = ppt.bag[bagiterator];
         bagiterator++;
-       return temp;
+       return next;
     }
 }
 
