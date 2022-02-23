@@ -15,6 +15,7 @@ namespace Shakkar {
         bool hold       : 1;
         bool hardDrop   : 1;
         bool softDrop   : 1;
+        bool sonicDrop  : 1;
         bool menuUp     : 1;
         bool menuDown   : 1;
         bool menuLeft   : 1;
@@ -31,6 +32,7 @@ namespace Shakkar {
         void setHold();
         void setHardDrop();
         void setSoftDrop();
+        void setSonicDrop();
         void setMenuUp();
         void setMenuDown();
         void setMenuLeft();
@@ -45,6 +47,7 @@ namespace Shakkar {
         void unsetHold();
         void unsetHardDrop();
         void unsetSoftDrop();
+        void unsetSonicDrop();
         void unsetMenuUp();
         void unsetMenuDown();
         void unsetMenuLeft();

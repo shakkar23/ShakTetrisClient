@@ -1,5 +1,5 @@
 #pragma once
 #include<stdint.h>
  
-    uint32_t pptRand();
+    uint_fast32_t pptRand();
     void forceReRollBag();

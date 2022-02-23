@@ -33,6 +33,7 @@ public:
   void unInit();
   SDL_Texture *getTex();
   SDL_Rect getTextureRegion();
+  void modifyTex(Uint8 a);
   SDL_Rect getSprite(); 
 
 

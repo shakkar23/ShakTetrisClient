@@ -29,15 +29,14 @@ void autoTexture::unInit(){
     SDL_DestroyTexture(tex);
     tex = nullptr;
 }
+
 autoTexture::~autoTexture() {
     //std::cout << "this shouldnt happen" << std::endl;
     if (tex == nullptr) return;
     SDL_DestroyTexture(tex);
 }
 
-
-SDL_Texture *autoTexture::getTex() { return tex; }
-
+SDL_Texture* autoTexture::getTex() { return tex; }
 SDL_Rect autoTexture::getSprite() { return sprite; }
 SDL_Rect autoTexture::getTextureRegion() { return textureRegion; }
 
@@ -48,4 +47,10 @@ void autoTexture::loadTexture(const char* p_filePath, RenderWindow &window) {
     if (this->tex == NULL)
         std::cout << "Failed to load texture. Error: " << SDL_GetError() << std::endl;
 
+}
+
+void autoTexture::modifyTex(Uint8 a) {
+
+    SDL_SetTextureAlphaMod(tex, a);
+   
 }

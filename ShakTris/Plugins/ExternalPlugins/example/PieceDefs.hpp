@@ -2,9 +2,9 @@
 #include <stdint.h>
 
 // the definition needs to be a square, otherwise change how you rotate pieces pls
-#define PIECEWIDTHANDHEIGHT 5
-#define PIECEWIDTH  PIECEWIDTHANDHEIGHT
-#define PIECEHEIGHT PIECEWIDTHANDHEIGHT
+constexpr auto PIECEWIDTHANDHEIGHT = 5;
+constexpr auto PIECEWIDTH = PIECEWIDTHANDHEIGHT;
+constexpr auto PIECEHEIGHT = PIECEWIDTHANDHEIGHT;
 
 
 enum ColorType : uint_fast8_t {

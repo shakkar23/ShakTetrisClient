@@ -12,6 +12,7 @@ namespace Shakkar {
 	void inputBitmap::setHold()			{ this->hold = true;		}
 	void inputBitmap::setHardDrop()		{ this->hardDrop = true;	}
 	void inputBitmap::setSoftDrop()		{ this->softDrop = true;	}
+	void inputBitmap::setSonicDrop()	{ this->sonicDrop = true;	}
 	void inputBitmap::setMenuUp()		{ this->menuUp = true;		}
 	void inputBitmap::setMenuDown()		{ this->menuDown = true;	}
 	void inputBitmap::setMenuLeft()		{ this->menuLeft = true;	}
@@ -26,6 +27,7 @@ namespace Shakkar {
 	void inputBitmap::unsetHold()		{ this->hold = false;		}
 	void inputBitmap::unsetHardDrop()	{ this->hardDrop = false;	}
 	void inputBitmap::unsetSoftDrop()	{ this->softDrop = false;	}
+	void inputBitmap::unsetSonicDrop()	{ this->sonicDrop = false;	}
 	void inputBitmap::unsetMenuUp()		{ this->menuUp = false;		} 
 	void inputBitmap::unsetMenuDown()	{ this->menuDown = false;	} 
 	void inputBitmap::unsetMenuLeft()	{ this->menuLeft = false;	} 

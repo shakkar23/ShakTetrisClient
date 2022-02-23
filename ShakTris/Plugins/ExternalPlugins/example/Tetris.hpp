@@ -5,6 +5,9 @@
 #include "../../../../Platform/SDL2/headers/Game.hpp"
 #include "ppt.h"
 #include <vector>
+#include <span>
+#include <cassert>
+
 
 constexpr int half(int i) {
     return i / 2;
@@ -12,7 +15,7 @@ constexpr int half(int i) {
 const auto getRandPiece() {
     
 
-    switch (pptRand() % 7)
+    switch (pptRand())
     {
     case 0:
         return PieceType::S;
@@ -42,14 +45,16 @@ const auto getRandPiece() {
 
 };
 
-const int BOARDWIDTH = 10;
-const int BOARDHEIGHT = 20;
+constexpr auto BOARDWIDTH = 10;
+constexpr auto BOARDHEIGHT = 20;
 
 
 class Board;
 class Piece {
 public:
-    Piece(PieceType kind, int_fast8_t x = 4 - half(PIECEWIDTH), int_fast8_t y = 19 - half(PIECEHEIGHT), RotationDirection spin = RotationDirection::North) {
+    Piece(PieceType kind, int_fast8_t x = 4 - half(PIECEWIDTH), int_fast8_t y = BOARDHEIGHT - (PIECEHEIGHT) + 1, RotationDirection spin = RotationDirection::North) {
+        //force the RNG to throw away its previous bag, and make a new one
+        
         this->kind = kind;
         setX(x); setY(y);
         this->spin = spin;
@@ -68,13 +73,13 @@ public:
         case North:
             break;
         case East:
-            rotatePieceMatrixLeft();
+            rotatePieceMatrixLeft(); rotatePieceMatrixLeft(); rotatePieceMatrixLeft();
             break;
         case South:
             rotatePieceMatrixLeft(); rotatePieceMatrixLeft();
             break;
         case West:
-            rotatePieceMatrixLeft(); rotatePieceMatrixLeft(); rotatePieceMatrixLeft();
+            rotatePieceMatrixLeft();
             break;
         default:
             break;
@@ -116,11 +121,11 @@ public:
         }
     }
 
-    inline void setX(int_fast8_t setter) {
+    void setX(int_fast8_t setter) {
         x = setter;
         realX = setter + half(PIECEWIDTH);
     }
-    inline void setY(int_fast8_t setter) {
+    void setY(int_fast8_t setter) {
         y = setter;
         realY = setter + half(PIECEWIDTH);
     }
@@ -190,13 +195,11 @@ public:
         }
     }
     void sonicDrop(Piece& piece) {
-        while (trySoftDrop(piece))
-            ;
-        return;
+        while (trySoftDrop(piece));
     }
 
     bool trySoftDrop(Piece &piece) {
-        piece.setY(piece.y-1);
+        piece.setY(piece.y - 1);
         if (isCollide(piece)) {
             piece.setY(piece.y+1); // if it collided, go back up where it should be safe
             return false;
@@ -231,31 +234,29 @@ public:
         return true;
     }
 
-
     bool tryRotate(Piece& piece, TurnDirection direction) {
-        if (piece.kind == PieceType::O)
-            return true;
-        auto incrRot = [&]() {
-            switch (piece.spin)
+        auto incrRot = [&](RotationDirection &spin) {
+            switch (spin)
             {
             case North:
-                piece.spin = East;
+                spin = East;
                 break;
             case East:
-                piece.spin = South;
+                spin = South;
                 break;
             case South:
-                piece.spin = West;
+                spin = West;
                 break;
             case West:
-                piece.spin = North;
+                spin = North;
                 break;
             default:
                 break;
             }
         };
         // temporary x and y to know their initial location
-        int_fast8_t x = piece.x; int_fast8_t y = piece.y;
+        const int_fast8_t x = piece.x; 
+        const int_fast8_t y = piece.y;
         if (direction == Right)
         {
             piece.rotatePieceMatrixLeft();
@@ -275,42 +276,54 @@ public:
         // spinclockwise should be a bool, but it can also be 2 as in rotating twice
         // in one frame aka 180 spin
         if (direction != TurnDirection::oneEighty) {
-            const int(*pdata)[kicks][2] = wallkickdata[piece.spin];
+            RotationDirection nextDir = piece.spin;
+            if (direction == Right)
+                incrRot(nextDir);
+            else if (direction == Left)
+            {
+                incrRot(nextDir); incrRot(nextDir); incrRot(nextDir);
+            }
 
-            if (piece.kind == PieceType::I)
-                pdata = Iwallkickdata[piece.spin];
-            for (int iter_rot = 0; iter_rot < kicks; ++iter_rot) {
-                piece.setX(x + (pdata[direction][iter_rot][0]));
-                piece.setY(y + (pdata[direction][iter_rot][1]));
+            auto* offsetData = &JLSTZPieceOffsetData[piece.spin];
+            auto* nextOffset = &JLSTZPieceOffsetData[nextDir];
+            if (piece.kind == PieceType::I) {
+                offsetData = &IPieceOffsetData[piece.spin];
+                nextOffset = &IPieceOffsetData[nextDir];
+            }
+            else if (piece.kind == PieceType::O)
+            {
+                offsetData = &OPieceOffsetData[piece.spin];
+                nextOffset = &OPieceOffsetData[nextDir];
+            }
+
+            for (int i = 0; i < kicks; ++i) {
+
+                piece.setX(x + (*offsetData)[i][0] - (*nextOffset)[i][0]);
+                piece.setY(y + (*offsetData)[i][1] - (*nextOffset)[i][1]);
 
                 if (!isCollide(piece)) {
-
-                    if (direction == Right)
-                        incrRot();
-                    else if (direction == Left)
-                    {
-                        incrRot(); incrRot(); incrRot();
-                    }
-
+                    piece.spin = nextDir;
                     return true;
                 }
             }
             piece.setX(x); piece.setY(y);
         }
         else {
-            const int(*kickdata)[2] = wallkick180data[piece.spin];
+            auto kickdata = wallkick180data[piece.spin];
             if (piece.kind == PieceType::I)
                 kickdata = Iwallkick180data[piece.spin];
 
-            for (int i = 0; i < kicks180; i++) {
-                piece.setX(x + kickdata[i][0]);
-                piece.setY(y + kickdata[i][1]);
+            const std::span chords{kickdata};
+            for (auto& kicks : chords) {
+                piece.setX(x + kicks[0]);
+                piece.setY(y + kicks[1]);
 
                 if (!isCollide(piece)) {
-                    incrRot(); incrRot();
+                    incrRot(piece.spin); incrRot(piece.spin);
                     return true;
                 }
             }
+            //}
             piece.setX(x); piece.setY(y);
         }
 
@@ -348,30 +361,28 @@ public:
     }
 
     bool isCollide(const Piece &piece) {
-        for (int w = piece.x; w < PIECEWIDTH + piece.x; w++)// subtract the height cause yes, it makes adding go up, due to the nautre of how to display arrays visually
+        for (int w = piece.x; w < (PIECEWIDTH + piece.x); w++)// subtract the height cause yes, it makes adding go up, due to the nautre of how to display arrays visually
         {
-            for (int h = piece.y; h < PIECEHEIGHT + piece.y; h++)
+            for (int h = piece.y; h < (PIECEHEIGHT + piece.y); h++)
             {
                     int x = w - piece.x;
                     int y = 4 - h + piece.y;
                 if ((((0 <= h) && (h < BOARDHEIGHT))) && (((0 <= w) && (w < BOARDWIDTH)))) //if inbounds of board
                 {
-                    ColorType pieceBlock = piece.piecedef[y][x];
-                    if (pieceBlock != empty) // is the cell empty in the piece matrix is empty
-
+                    if (piece.piecedef[y][x] != empty) // is the cell empty in the piece matrix is empty
                         if (board.at(w).at(h) != empty) // is the cell in the board matrix empty
                             return true;
                 }
-                if (h < 0) // can be above, but not below the board
+
+                if ((w < 0) || (w >= BOARDWIDTH)) // cant be out of bounds on either direction
                 {
-                    ColorType pieceBlock = piece.piecedef[y][x];
-                    if (pieceBlock != empty)
+                    if (piece.piecedef[y][x] != empty)
                         return true;
                 }
-                else if ((w < 0) || (w >= BOARDWIDTH)) // cant be out of bounds on either direction
+
+                if (h < 0) // can be above, but not below the board
                 {
-                    ColorType pieceBlock = piece.piecedef[y][x];
-                    if (pieceBlock != empty)
+                    if (piece.piecedef[y][x] != empty)
                         return true;
                 }
             }
@@ -459,36 +470,42 @@ public:
     void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput);
     void render(RenderWindow& window);
     void Init(RenderWindow& window) {
-        this->background.Init("Asset/Sprites/exampleAssets/TetrisBackground.png", window); //1080p background
-        this->matrix.Init("Asset/Sprites/Tetris_images/Matrix.png", window); // original size is 224 by 299
-        this->pieces.Init("Asset/Sprites/exampleAssets/TetrisPieces.png", window);
-        //this->matrixBackground.Init("Asset/Sprites/exampleAssets/matrixBackground", window); //need this later
-        this->background.sprite = { 0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
-        this->matrix.sprite = {
-            ((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50 ,
-            ((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100,
-            (224 * 4),
-            (299 * 4)
-        }; // first pixel on the matrix should be 50, 34
-        pieces.textureRegion = {0, 0, 16, 16};
-        pieces.sprite = {0,0,24,24};
-    }
-    void reload() {
+        //forceReRollBag();
 
-        board.clear();
         queue.clear();
         queue.reserve(7);
         forceReRollBag();
         currentPiece = Piece(getRandPiece());
         for (size_t i = 0; i < 7; i++)
             queue.emplace_back(Piece(getRandPiece()));
+        this->background.Init("Asset/Sprites/exampleAssets/TetrisBackground.png", window); //1080p background
+        this->matrix.Init("Asset/Sprites/Tetris_images/Matrix.png", window); // original size is 224 by 299
+        this->pieces.Init("Asset/Sprites/exampleAssets/TetrisPieces.png", window);
+        this->ghostPieces.Init("Asset/Sprites/exampleAssets/TetrisPieces.png", window);
+        Uint8 a = 100;
+        this->ghostPieces.modifyTex(a);
+        
+        //this->matrixBackground.Init("Asset/Sprites/exampleAssets/matrixBackground", window); //need this later
 
+
+
+        this->background.sprite = { 0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
+        this->matrix.sprite = {
+            matrixX ,
+            matrixY,
+            (224 * 4),
+            (299 * 4)
+        }; // first pixel on the matrix should be 50, 34
+        pieces.textureRegion = { 0, 0, 16, 16 };
+        pieces.sprite = { 0,0,24,24 }; 
+        ghostPieces.textureRegion = { 0, 0, 16, 16 };
+        ghostPieces.sprite = { 0,0,24,24 };
+    }
+    void reload() {
+
+        board.clear();
     }
 private:
-        const uint16_t dasSetting = 80; // these are in miliseconds
-        const uint16_t arrSetting = 0;
-        uint16_t dasIterator = 0;
-        uint16_t arrIterator = 0;
     bool tryMovePiece(MoveDirection direction, bool JustPressed) {
 
         int offset{};
@@ -531,47 +548,53 @@ private:
 
         return false;
     }
-    Piece hold{PieceType::empty};
-    Piece currentPiece{ getRandPiece() };
+    const int16_t matrixXPos = (((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50);
+    const int16_t matrixYPos = (((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100); 
+    int16_t matrixX = matrixXPos;
+    int16_t matrixY = matrixYPos;
+
+    const uint16_t dasSetting = 80; // these are in miliseconds
+    const uint16_t arrSetting = 0;
+    uint16_t dasIterator = 0;
+    uint16_t arrIterator = 0;
+    Piece hold {PieceType::empty};
+    Piece currentPiece { PieceType::empty };
     std::vector<Piece> queue{};
     Board board;
-
     autoTexture background;
     autoTexture matrix;
     autoTexture pieces;
+    autoTexture ghostPieces;
     autoTexture matrixBackground;
 };
 
 Game::Game()
 {
-    printf("example initialized");
-    //temp pieces
-    queue.reserve(7);
-    for (size_t i = 0; i < 7; i++)
-        queue.emplace_back(Piece(getRandPiece()));
-
+    
 }
 
-const static auto softdropCountdownMAX = (4096 * (1000 /60)); // 4096 cause thats what ppt uses according to fug
-static auto softdropCountdown = softdropCountdownMAX;
-
-const static uint16_t pieceSpawnDelayMAX = 0;
-static int32_t pieceSpawnDelay = pieceSpawnDelayMAX;
-
-bool leftState{};
-bool rightState{};
-
-bool checkForLineClear{};
-
-uint16_t lockDelayIncrementer{};
-const uint_fast16_t lockDelayMAX = (UPDATES_A_SECOND / 2);
-
-
 void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
+
+    // 4096 cause thats what ppt uses according to fug
+    constexpr auto softdropCountdownMAX = (4096 * (UPDATES_A_SECOND / 60));
+    static auto softdropCountdown = softdropCountdownMAX;
+
+    const uint16_t pieceSpawnDelayMAX = 0;
+    static int32_t pieceSpawnDelay = pieceSpawnDelayMAX;
+
+    const uint_fast16_t lockDelayMAX = (UPDATES_A_SECOND / 4);
+    static uint16_t lockDelayIncrementer{};
+
+    bool static checkForLineClear{};
+    bool static alreadyHeld{};
+    bool leftState{};
+    bool rightState{};
+
     if (checkForLineClear) {
         board.clearLines(); 
         checkForLineClear = false;
     }
+
     leftState = rightState ? false : input.left;
     rightState = leftState ? false : input.right;
 
@@ -583,6 +606,7 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
             board.setPiece(currentPiece);
             currentPiece.kind = PieceType::empty;
             checkForLineClear = true;
+            alreadyHeld = false;
         }
 
         if (leftState)
@@ -594,8 +618,6 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
         }
 
         {
-
-
             if (softdropCountdown <= 0)
             {
                 //softdrop pls
@@ -607,6 +629,7 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
                         currentPiece.kind = PieceType::empty;
                         checkForLineClear = true;
                         lockDelayIncrementer = 0;
+                        alreadyHeld = false;
                     }
                     else 
                         lockDelayIncrementer++;
@@ -624,105 +647,309 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
 
             if (justPressed(prevInput.rotLeft, input.rotLeft))
                 board.tryRotate(currentPiece, TurnDirection::Left);
+
             else if (justPressed(prevInput.rotRight, input.rotRight))
                 board.tryRotate(currentPiece, TurnDirection::Right);
+
             else if (justPressed(prevInput.rot180, input.rot180))
                 board.tryRotate(currentPiece, TurnDirection::oneEighty);
 
+            if (prevInput.sonicDrop)
+                board.sonicDrop(currentPiece);
+
+            if (justPressed(prevInput.hold, input.hold))
+            {
+                if (!alreadyHeld) {
+                    std::swap(currentPiece, hold);
+                    currentPiece.setX(4 - half(PIECEWIDTH));
+                    currentPiece.setY(BOARDHEIGHT - (PIECEHEIGHT)+1);
+
+                    switch (currentPiece.spin)
+                    {
+                    case North:
+                        break;
+                    case East:
+                        currentPiece.rotatePieceMatrixLeft();
+                        break;
+                    case South:
+                        currentPiece.rotatePieceMatrixLeft(); currentPiece.rotatePieceMatrixLeft();
+                        break;
+                    case West:
+                        currentPiece.rotatePieceMatrixLeft(); currentPiece.rotatePieceMatrixLeft(); currentPiece.rotatePieceMatrixLeft();
+                        break;
+                    default:
+                        break;
+                    }
+                    currentPiece.spin = North;
+
+                    switch (hold.spin)
+                    {
+                    case North:
+                        break;
+                    case East:
+                        hold.rotatePieceMatrixLeft();
+                        break;
+                    case South:
+                        hold.rotatePieceMatrixLeft(); hold.rotatePieceMatrixLeft();
+                        break;
+                    case West:
+                        hold.rotatePieceMatrixLeft(); hold.rotatePieceMatrixLeft(); hold.rotatePieceMatrixLeft();
+                        break;
+                    default:
+                        break;
+                    }
+                    hold.spin = North;
+                    alreadyHeld = true;
+                }
+            }
+
+
         }
     } else if (pieceSpawnDelay <= 0) { //guarenteed no piece
+
         pieceSpawnDelay = pieceSpawnDelayMAX;
         softdropCountdown = softdropCountdownMAX;
+
         currentPiece = queue.at(0);
         queue.erase(queue.begin()); 
         queue.emplace_back(Piece(getRandPiece()));
+
         leftState = false;
         rightState = false;
         checkForLineClear = false;
+
     } else 
         pieceSpawnDelay--;
 }
 
 void Game::render(RenderWindow& window) {
+
     window.render(background);
+
+    matrix.sprite.x = matrixX;
+    matrix.sprite.y = matrixY;
+
     window.render(matrix);
-    //
-    const uint16_t width_offset = (((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50) + (50 * 4) - 1;
-    const uint16_t height_offset = (((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100) + (34 * 4) - 1; 
+
+    const uint16_t width_offset = matrixX + (50 * 4) - 1;
+    const uint16_t height_offset = matrixY + (34 * 4) - 1;
+
+    Piece ghost(currentPiece.kind, currentPiece.x, currentPiece.y, currentPiece.spin);
+    if(ghost.kind != PieceType::empty)
+        board.sonicDrop(ghost);
+
     // the minus ones because otherwise https://cdn.discordapp.com/attachments/802969309260677120/909250930506080326/unknown.png
     for (int_fast8_t height = BOARDHEIGHT - 1; height >= 0; height--)
     {
         for (int_fast8_t width = 0; width < BOARDWIDTH; width++)
         {
-            auto helper = [&]() {
-                
-
-                pieces.sprite.x = width_offset + (width * (24 * 2));
-                pieces.sprite.w = 16 * 3;
-                pieces.sprite.y = height_offset + ((BOARDHEIGHT- height-1) * (24 * 2));
-                pieces.sprite.h = 16 * 3;
+            auto helper = [&](autoTexture& minos) {
+                minos.sprite.x = width_offset + (width * (24 * 2));
+                minos.sprite.w = 16 * 3;
+                minos.sprite.y = height_offset + ((BOARDHEIGHT - height - 1) * (24 * 2));
+                minos.sprite.h = 16 * 3;
             };
-            auto drawPiece = [&](ColorType block) {
+            auto drawPiece = [&](ColorType block, autoTexture& minos) {
                 switch (block)
                 {
                 case empty:
-                    pieces.textureRegion.x = 16;
-                    helper();
+                    minos.textureRegion.x = 16;
+                    helper(minos);
                     break;
                 case Z:
-                    pieces.textureRegion.x = 32;
-                    helper();
+                    minos.textureRegion.x = 32;
+                    helper(minos);
                     break;
                 case L:
-                    pieces.textureRegion.x = 48;
-                    helper();
+                    minos.textureRegion.x = 48;
+                    helper(minos);
                     break;
                 case O:
-                    pieces.textureRegion.x = 64;
-                    helper();
+                    minos.textureRegion.x = 64;
+                    helper(minos);
                     break;
                 case S:
-                    pieces.textureRegion.x = 80;
-                    helper();
+                    minos.textureRegion.x = 80;
+                    helper(minos);
                     break;
                 case I:
-                    pieces.textureRegion.x = 96;
-                    helper();
+                    minos.textureRegion.x = 96;
+                    helper(minos);
                     break;
                 case J:
-                    pieces.textureRegion.x = 112;
-                    helper();
+                    minos.textureRegion.x = 112;
+                    helper(minos);
                     break;
                 case T:
-                    pieces.textureRegion.x = 128;
-                    helper();
+                    minos.textureRegion.x = 128;
+                    helper(minos);
                     break;
                 case line_clear:
-                    pieces.textureRegion.x = 144;
-                    helper();
+                    minos.textureRegion.x = 144;
+                    helper(minos);
                     break;
                 default:
                     break;
                 }
             };
-
-            if (((currentPiece.x <= width) && (width <= (currentPiece.x + PIECEWIDTH - 1))) && ((currentPiece.y <= height) && (height <= (currentPiece.y + PIECEHEIGHT - 1))))
+            if (((currentPiece.x <= width) && (width <= (currentPiece.x + PIECEWIDTH - 1))) && ((currentPiece.y <= height) && (height <= (currentPiece.y + PIECEHEIGHT - 1))) &&
+                (currentPiece.piecedef[4 - height + currentPiece.y][width - currentPiece.x] != empty) && currentPiece.kind != PieceType::empty)
             {
-                ColorType block = currentPiece.piecedef[4 - height + currentPiece.y][width - currentPiece.x];
-                if ((block != empty) && currentPiece.kind != PieceType::empty)
-                    drawPiece(block);
-                else
-                    drawPiece(board.board[width][height]);
+                drawPiece(PieceTypeToColorType(currentPiece.kind), pieces);
+                window.render(pieces);
 
             }
-            else
-                drawPiece(board.board[width][height]);
+            else if (((ghost.x <= width) && (width <= (ghost.x + PIECEWIDTH - 1))) && ((ghost.y <= height) && (height <= (ghost.y + PIECEHEIGHT - 1))) &&
+                (ghost.piecedef[4 - height + ghost.y][width - ghost.x] != empty) && ghost.kind != PieceType::empty)
+            {
+                drawPiece(PieceTypeToColorType(ghost.kind), ghostPieces);
+                window.render(ghostPieces);
+            }
+            else {
+                drawPiece(board.board[width][height], pieces);
+                window.render(pieces);
 
-
-            window.render(pieces);
+            }
         }
-
     }
+
+    int16_t queue_width_offset = width_offset + (122*4) - 1 - 1;
+    int16_t queue_height_offset = height_offset;
+
+    //render queue 5 pieces to be seen, each with its own matrix of a 5x5 view
+    for (size_t q = 0; q < 5; q++)
+    {
+        for (int y = PIECEHEIGHT-1; y >= 0; y--)
+        //for (int y = 0; y < PIECEHEIGHT; y++)
+        {
+            for (int x = 0; x < PIECEWIDTH; x++)
+            //for (int x = PIECEWIDTH -1; x >= 0; x--)
+            {
+                auto helper = [&](autoTexture& minos) {
+                    minos.sprite.x = queue_width_offset + (x * (16 * 2));
+                    minos.sprite.w = 16 * 2;
+                    minos.sprite.y = queue_height_offset + ((y) * (16 * 2));
+                    minos.sprite.h = 16 * 2;
+                };
+                auto drawPiece = [&](ColorType block, autoTexture& minos) {
+                    switch (block)
+                    {
+                    case empty:
+                        minos.textureRegion.x = 16;
+                        helper(minos);
+                        break;
+                    case Z:
+                        minos.textureRegion.x = 32;
+                        helper(minos);
+                        break;
+                    case L:
+                        minos.textureRegion.x = 48;
+                        helper(minos);
+                        break;
+                    case O:
+                        minos.textureRegion.x = 64;
+                        helper(minos);
+                        break;
+                    case S:
+                        minos.textureRegion.x = 80;
+                        helper(minos);
+                        break;
+                    case I:
+                        minos.textureRegion.x = 96;
+                        helper(minos);
+                        break;
+                    case J:
+                        minos.textureRegion.x = 112;
+                        helper(minos);
+                        break;
+                    case T:
+                        minos.textureRegion.x = 128;
+                        helper(minos);
+                        break;
+                    case line_clear:
+                        minos.textureRegion.x = 144;
+                        helper(minos);
+                        break;
+                    default:
+                        break;
+                    }
+                };
+                drawPiece(queue[q].piecedef[y][x], pieces);
+                window.render(pieces);
+            }
+        }
+        queue_height_offset += (2*4);
+        queue_height_offset += (PIECEHEIGHT * 16 * 2);
+    }
+
+
+    int16_t hold_width_offset = width_offset - (42 * 4);
+    int16_t hold_height_offset = height_offset;
+
+    //render the holds
+    for (int h = 0; h < 1; h++)
+    {
+        for (int y = PIECEHEIGHT - 1; y >= 0; y--)
+            //for (int y = 0; y < PIECEHEIGHT; y++)
+        {
+            for (int x = 0; x < PIECEWIDTH; x++)
+                //for (int x = PIECEWIDTH -1; x >= 0; x--)
+            {
+                auto helper = [&](autoTexture& minos) {
+                    minos.sprite.x = hold_width_offset + (x * (16 * 2));
+                    minos.sprite.w = 16 * 2;
+                    minos.sprite.y = hold_height_offset + ((y) * (16 * 2));
+                    minos.sprite.h = 16 * 2;
+                };
+                auto drawPiece = [&](ColorType block, autoTexture& minos) {
+                    switch (block)
+                    {
+                    case empty:
+                        minos.textureRegion.x = 16;
+                        helper(minos);
+                        break;
+                    case Z:
+                        minos.textureRegion.x = 32;
+                        helper(minos);
+                        break;
+                    case L:
+                        minos.textureRegion.x = 48;
+                        helper(minos);
+                        break;
+                    case O:
+                        minos.textureRegion.x = 64;
+                        helper(minos);
+                        break;
+                    case S:
+                        minos.textureRegion.x = 80;
+                        helper(minos);
+                        break;
+                    case I:
+                        minos.textureRegion.x = 96;
+                        helper(minos);
+                        break;
+                    case J:
+                        minos.textureRegion.x = 112;
+                        helper(minos);
+                        break;
+                    case T:
+                        minos.textureRegion.x = 128;
+                        helper(minos);
+                        break;
+                    case line_clear:
+                        minos.textureRegion.x = 144;
+                        helper(minos);
+                        break;
+                    default:
+                        break;
+                    }
+                };
+                drawPiece(hold.piecedef[y][x], pieces);
+                window.render(pieces);
+            }
+        }
+    }
+
 }
 
 Game::~Game()
