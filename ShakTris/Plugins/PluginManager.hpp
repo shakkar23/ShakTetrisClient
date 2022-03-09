@@ -19,6 +19,7 @@
 #elif defined(OS_LINUX)
 #include <xdg.hpp>
 #endif
+
 class Plugin {
 public:
     Plugin(std::string_view path);
@@ -77,7 +78,7 @@ private:
 class AudioManager
 {
 private:
-    //wont be played
+    //wont be played although still needs to exist
     const char* mus2 = "Asset/Sounds/Sound.wav";
 
     static Uint32 wav_length; // length of our sample

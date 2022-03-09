@@ -14,10 +14,14 @@
 
 
 int main(int argc, char* args[]) {
-    if (SDL_Init(SDL_INIT_AUDIO) < 0)
-        return 1;
-    if (SDL_Init(SDL_INIT_VIDEO) > 0)
+    if (SDL_Init(SDL_INIT_AUDIO) != 0)
+        std::cout << "HEY.. Audio_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
+        << std::endl;
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
         std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
+        << std::endl;
+    if (TTF_Init() != 0)
+        std::cout << "HEY.. ttf_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
         << std::endl;
 
     if (!(IMG_Init(IMG_INIT_PNG)))
@@ -37,7 +41,7 @@ int main(int argc, char* args[]) {
     bool windowSizedChanged = false;
 
     double alpha = 0.0;
-    Uint64 last_time = 0;
+    Uint64 last_time = SDL_GetPerformanceCounter();
     Uint64 ticks = 0;
 
     while (gameRunning) {
@@ -120,6 +124,7 @@ int main(int argc, char* args[]) {
 
     window.cleanUp();
     SDL_Quit();
+    TTF_Quit();
 
     return 0;
 }

@@ -35,6 +35,7 @@ include("${SRC}/Platform/Util/AddBinary.cmake")
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2-image REQUIRED)
+find_package(SDL2-ttf REQUIRED)
 add_library(${plugin} SHARED
         ${PLUGIN_SOURCES}
 )
@@ -46,8 +47,8 @@ target_include_directories(${plugin} PUBLIC ${PLUGIN_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIRS}
 	${PLATFORM_HEADERS}
 	)
-target_link_libraries(${plugin} SDL2::SDL2 SDL2::SDL2_image Registry)
-#target_link_libraries(${plugin} Registry)
+target_link_libraries(${plugin} SDL2::SDL2 SDL2::SDL2_image SDL2::SDL2_ttf Registry)
+
 set_target_properties( 
 		${plugin}
     PROPERTIES
@@ -85,6 +86,7 @@ AddBinary(
 		Registry
 		SDL2::SDL2 
 		SDL2::SDL2_image
+		SDL2::SDL2_ttf
 		${CMAKE_DL_LIBS}
 )
 

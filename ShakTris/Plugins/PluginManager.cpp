@@ -1,5 +1,6 @@
 #include "PluginManager.hpp"
 #include<iostream>
+#include <chrono>
 
 //#include"NameMangling/NameMangler.hpp"
 

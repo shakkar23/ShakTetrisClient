@@ -6,7 +6,7 @@ mainMenuGUI::mainMenuGUI() :
 }
 mainMenuGUI::mainMenuGUI(RenderWindow& window) :
 	subMenu(nullptr) {
-	Init(window);
+	this->Init(window);
 }
 mainMenuGUI::mainMenuGUI(menuGUI* parentMenu) :
 	subMenu(nullptr) {
@@ -16,6 +16,7 @@ mainMenuGUI::mainMenuGUI(menuGUI* parentMenu) :
 mainMenuGUI::~mainMenuGUI() {
 	if (subMenu != nullptr) {
 		delete subMenu;
+		subMenu = nullptr;
 	}
 }
 
@@ -48,12 +49,12 @@ void mainMenuGUI::Init(RenderWindow& window) {
 void mainMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
 	// in this scenario the top option is 0, and you increment to go down
 
-	if (submenuWasDeleted) {
+	[[unlikely]] if (submenuWasDeleted) {
 		subMenu = nullptr;
 		submenuWasDeleted = false;
 	}
 	if (this->subMenu == nullptr) {
-		if (input.menuDown && !prevInput.menuDown) {
+		if (justPressed(prevInput.menuDown, input.menuDown)) {
 			highlighted = (highlighted + 1) % numberOfOptions;
 		}
 		if (input.menuUp && !prevInput.menuUp) { //prevent menu underflow
@@ -88,6 +89,11 @@ void mainMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 }
 
 void mainMenuGUI::render(RenderWindow& window) {
+
+	if (submenuWasDeleted) {
+		subMenu = nullptr;
+		submenuWasDeleted = false;
+	}else
 	if (this->subMenu == nullptr) {
 		Uint8 r = 0, g = 0, b = 255;
 		Uint8 rDud = 255, gDud = 255, bDud = 255;

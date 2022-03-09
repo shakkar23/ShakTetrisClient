@@ -20,11 +20,15 @@ public:
   int getRefreshrate();
   void cleanUp();
   void clear();
-  void render(autoTexture &p_entity);
+  void render(autoTexture& p_entity);
+  void renderCopy(SDL_Texture* texture,
+      const SDL_Rect* srcrect,
+      const SDL_Rect* dstrect);
   void display(); 
   void getWindowSize(int& x, int&y);
   void setWindowSize(int x, int y);
   void renderFrame(std::vector<autoTexture *> & entities);
+  SDL_Texture* CreateTextureFromSurface(SDL_Surface* surface);
 
 private:
   SDL_Window *window;
