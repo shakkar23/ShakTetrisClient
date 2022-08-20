@@ -1,2 +1,5 @@
 Thanks nightmareci for the really cool SDL2 compiling structure, and especially the cmake in Addbinary, and ExecutableTypeSimple!
-Thank you to NonJohns and Grrawesomeness for the amazing art, really appreciate the work youve put in
+Thank you to NonJohns and Grrawesomeness for the amazing art, really appreciate the work you've put in
+
+## Features
+Loads any .tetris file and displays and plays them as modes within the game
