@@ -58,11 +58,13 @@ private:
     };
 };
 
+
 class PluginManager {
 public:
     PluginManager() = delete;
 
     static bool load(std::string_view pluginFolder);
+    static bool loadPlugins(RenderWindow& window);
     static void unload();
     static void reload();
 
@@ -101,7 +103,6 @@ private:
 
 
 
-bool loadPlugins(RenderWindow& window);
 bool unloadPlugins();
 std::vector<std::string> getPath();
 

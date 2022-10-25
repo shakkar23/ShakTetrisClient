@@ -23,22 +23,22 @@ settingsMenuGUI::~settingsMenuGUI() {
 }
 void settingsMenuGUI::Init(RenderWindow& window) {
 	if (!isInitialized) {
-		background.Init("Asset/Sprites/invertedshak.png", window);
-		settingsButton.Init("Asset/Sprites/MainMenu/settingsText.png", window);
-		playButton.Init("Asset/Sprites/MainMenu/playText.png", window);
-		exitButton.Init("Asset/Sprites/MainMenu/exitText.png", window);
+		background.load(window, "Asset/Sprites/invertedshak.png");
+		settingsButton.load(window, "Asset/Sprites/MainMenu/settingsText.png");
+		playButton.load (window, "Asset/Sprites/MainMenu/playText.png");
+		exitButton.load(window, "Asset/Sprites/MainMenu/exitText.png");
 
 		//change this
-		background.sprite = { 0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
+		background.destRect = { 0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
 		//background.textureRegion;
 
-		playButton.sprite = { 0,0,177,61 };
+		playButton.destRect = { 0,0,177,61 };
 		//playButton.textureRegion;
 
-		settingsButton.sprite = { 0,61,370,63 };
+		settingsButton.destRect = { 0,61,370,63 };
 		//settingsButton.textureRegion;
 
-		exitButton.sprite = { 0,(61 + 63),160,61 };
+		exitButton.destRect = { 0,(61 + 63),160,61 };
 		//exitButton.textureRegion;
 		texs = { &background, &playButton, &settingsButton, &exitButton };
 		highlighted = 0;
@@ -93,37 +93,37 @@ void settingsMenuGUI::render(RenderWindow& window) {
 		switch ((GameState)highlighted)
 		{
 		case settingsMenuGUI::Play:
-			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
 				r, g, b);
-			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
 				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
 				rDud, gDud, bDud);
 
 			break;
 		case settingsMenuGUI::Settings:
 
-			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
 				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
 				r, g, b);
-			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
 				rDud, gDud, bDud);
 			break;
 		case settingsMenuGUI::Exit:
 
-			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
 				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
 				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->getTex()),
+			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
 				r, g, b);
 			break;
 		default:
 			break;
 		}
-		for (autoTexture* e : texs) {
-			window.render(*e);
+		for (auto* e : texs) {
+			e->render(window);
 		}
 	}
 	else if (!subMenu->isInitialized) {

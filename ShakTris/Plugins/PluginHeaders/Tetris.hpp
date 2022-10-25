@@ -7,12 +7,12 @@
 #include "../../../Platform/SDL2/headers/Game.hpp"
 #include "../../../ShakTris/Input/Input.hpp"
 
-
+class PlayMenuGUI;
+class PluginManager;
 namespace Shakkar {
-
     class Tetris {
     public:
-        explicit Tetris(const std::string &unlocalizedTetrisName): m_unlocalizedTetrisName(unlocalizedTetrisName){}
+        explicit Tetris(){}
         virtual void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) = 0;
         virtual void render(RenderWindow& window) = 0;
         //this needs to reload the game when called after the first time called
@@ -20,7 +20,12 @@ namespace Shakkar {
         virtual void Init(RenderWindow& window) = 0;
         bool isPlaying = false;
     private:
-        std::string m_unlocalizedTetrisName;
+    //the Play menu that will look at the names and display them so they need to have access to these names0
+    friend PlayMenuGUI;
+    friend PluginManager;
+    std::string m_unlocalizedTetrisName;
+    std::string m_unlocalizedTetrisDesc;
+    std::string m_unlocalizedTetrisAuth;
     };
 };
 #endif

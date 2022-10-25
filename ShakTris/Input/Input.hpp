@@ -21,6 +21,7 @@ namespace Shakkar {
         bool menuLeft   : 1;
         bool menuRight  : 1;
         bool menuSelect : 1;
+        bool menuExit   : 1;
 
         inputBitmap();
 
@@ -38,6 +39,7 @@ namespace Shakkar {
         void setMenuLeft();
         void setMenuRight();
         void setMenuSelect();
+        void setMenuExit();
 
         void unsetLeft();
         void unsetRight();
@@ -53,6 +55,7 @@ namespace Shakkar {
         void unsetMenuLeft();
         void unsetMenuRight();
         void unsetMenuSelect();
+        void unsetMenuExit();
         
     private:
     };

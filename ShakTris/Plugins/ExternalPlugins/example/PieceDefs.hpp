@@ -2,20 +2,20 @@
 #include <stdint.h>
 
 // the definition needs to be a square, otherwise change how you rotate pieces pls
-constexpr auto PIECEWIDTHANDHEIGHT = 5;
-constexpr auto PIECEWIDTH = PIECEWIDTHANDHEIGHT;
-constexpr auto PIECEHEIGHT = PIECEWIDTHANDHEIGHT;
-
+constexpr auto MINOSINAPIECE = 4;
+struct Coord {
+    int8_t x; int8_t y;
+};
 
 enum ColorType : uint_fast8_t {
 
-    //actual pieces
+    //Color for pieces
     S, Z, J, L, T, O, I,
     //special types
     empty,
     line_clear,
     number_of_ColorTypes
-};
+}; 
 
 enum class PieceType : uint_fast8_t {
     //actual pieces
@@ -29,6 +29,12 @@ enum class PieceType : uint_fast8_t {
     empty = ColorType::empty,
     number_of_PieceTypes
 };
+
+struct Colors{
+    ColorType a : 4;
+    ColorType b : 4;
+};
+
 const ColorType PieceTypeToColorType(PieceType color) {
     switch (color)
     {
@@ -73,72 +79,18 @@ enum class MoveDirection : uint_fast8_t {
 };
 
 // note: for some reason the piece definition is [piecetype][PIECEHEIGHT - 1 - y][x]
-// everything else in the repo accounts for this, so there is no point in changing it as of writing this note, ¯\_(ツ)_ /¯
-constexpr ColorType PieceDefinition[(int)PieceType::number_of_PieceTypes][PIECEWIDTH][PIECEHEIGHT] = {
-    // the /**/ is to indicate the center of the definition, I thought it was clever 
+// everything else in the repo accounts for this, so there is no point in changing it as of writing this note, ¯\_(ツ)_/¯
+//constexpr ColorType PieceDefinition[(int)PieceType::number_of_PieceTypes][4] = {
+constexpr std::array<std::array<Coord, MINOSINAPIECE>, (int)PieceType::number_of_PieceTypes> PieceDefintions{
 
-    {//S
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,S    ,S    ,empty,},
-        {empty,S    ,S/**/,empty,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//Z
-        {empty,empty,empty,empty,empty,},
-        {empty,Z    ,Z    ,empty,empty,},
-        {empty,empty,Z/**/,Z    ,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//J
-        {empty,empty,empty,empty,empty,},
-        {empty,J    ,empty,empty,empty,},
-        {empty,J    ,J/**/,J    ,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//L
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,L    ,empty,},
-        {empty,L    ,L/**/,L    ,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//T
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,T    ,empty,empty,},
-        {empty,T    ,T/**/,T    ,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//O
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,O    ,O    ,empty,},
-        {empty,empty,O/**/,O    ,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//I
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,I    ,I/**/,I    ,I    ,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,}
-
-    },
-    {//NULL
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,},
-        {empty,empty,empty,empty,empty,},
-
-    },
+    {
+            {{{-1, 0}, {0, 0}, {0, 1}, { 1, 1}}},  // S
+            {{{-1, 1}, {0, 1}, {0, 0}, { 1, 0}}},  // Z
+            {{{-1, 0}, {0, 0}, {1, 0}, {-1, 1}}},  // J
+            {{{-1, 0}, {0, 0}, {1, 0}, { 1, 1}}},  // L
+            {{{-1, 0}, {0, 0}, {1, 0}, { 0, 1}}},  // T
+            {{{ 0, 0}, {1, 0}, {0, 1}, { 1, 1}}},  // O
+            {{{-1, 0}, {0, 0}, {1, 0}, { 2, 0}}},  // I
+            {{{ 0, 0}, {0, 0}, {0, 0}, { 0, 0}}}   // NULL
+    }
 };

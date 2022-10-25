@@ -195,7 +195,7 @@ std::vector<std::string> getPath() {
 #endif
 }
 
-bool loadPlugins(RenderWindow &window) {
+bool PluginManager::loadPlugins(RenderWindow &window) {
     printf("loading Plugins");
     for (const auto& dir : getPath()) {
         PluginManager::load(dir);
@@ -207,6 +207,10 @@ bool loadPlugins(RenderWindow &window) {
 
     for (const auto& plugin : PluginManager::getPlugins()) {
         plugin.initializePlugin(window);
+        Shakkar::Plugins::getEntries().back()->m_unlocalizedTetrisAuth = plugin.getPluginAuthor();
+        Shakkar::Plugins::getEntries().back()->m_unlocalizedTetrisDesc = plugin.getPluginDescription();
+        Shakkar::Plugins::getEntries().back()->m_unlocalizedTetrisName = plugin.getPluginName();
+
     }
 
     return true;

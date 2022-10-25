@@ -1,12 +1,13 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-project("ShakTetrisClient" VERSION 0.7.9)
+set(CC ${CMAKE_C_COMPILER})
+set(CXX ${CMAKE_CXX_COMPILER})
+project("ShakTetrisClient" VERSION "1.1.1")
 
 if(NOT PLATFORM_NAME)
 	set(PLATFORM_NAME "SDL2")

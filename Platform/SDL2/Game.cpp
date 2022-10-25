@@ -1,6 +1,6 @@
 ﻿#include <SDL.h>
 #include <SDL_image.h>
-#include <iostream>
+//#include <iostream>
 #include <vector>
 #include "headers/entity.hpp"
 #include "headers/RenderWindow.hpp"
@@ -11,7 +11,18 @@
 #include "../../ShakTris/Plugins/PluginManager.hpp"
 #include <atomic>
 #include <thread>
-
+#include <iostream>
+//std::atomic_bool gameOn = true;
+//std::atomic_int32_t fps = 0;
+//void renderfps() {
+//    while (gameOn) {
+//        Sleep(1000);
+//        std::cout <<"\r" << fps;
+//        std::cout.flush();
+//        fps = 0;
+//    }
+//    return;
+//}
 
 int main(int argc, char* args[]) {
     if (SDL_Init(SDL_INIT_AUDIO) != 0)
@@ -30,9 +41,9 @@ int main(int argc, char* args[]) {
     RenderWindow window("Shaktris", 480 * 2, 272 * 2); // tiny window initially, will be full screenable now :sunglasses: // later hopefully
     GameManager.Init(window);
     AudioManager manager;
-    //auto ad = (&Correct::games);
-    Shakkar::inputBitmap input;
-    Shakkar::inputBitmap prevInput;
+    //std::thread fpscounter = std::thread(renderfps);
+    Shakkar::inputBitmap input = Shakkar::inputBitmap();
+    Shakkar::inputBitmap prevInput = Shakkar::inputBitmap();
 
     bool gameRunning = true;
     SDL_Event event;
@@ -93,6 +104,7 @@ int main(int argc, char* args[]) {
                     alpha -= 1.0;
                 }
                 if (gameRunning) {
+                    //fps++;
                     GameManager.render(window);
                 }
                 else {
@@ -125,6 +137,6 @@ int main(int argc, char* args[]) {
     window.cleanUp();
     SDL_Quit();
     TTF_Quit();
-
+    //gameOn = false;
     return 0;
 }

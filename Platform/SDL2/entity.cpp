@@ -1,56 +1,118 @@
 //not my code
 #include "headers/entity.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <iostream>
+#include <string_view>
 
-autoTexture::autoTexture() {}
-autoTexture::autoTexture(const char* filepath, RenderWindow &window) {
-    this->loadTexture(filepath, window);
+
+void SurfaceTexture::load(RenderWindow& window, std::string path, int32_t x, int32_t y, uint8_t sections) {
+		(*this) = TextureDictionary::getSurfaceTexture(window, path);
 }
 
-void autoTexture::Init(const char* filepath, RenderWindow &window)
-{
-    if (tex != nullptr) return;
-    this->loadTexture(filepath, window);
+void SurfaceTexture::render(RenderWindow& window) {
 
+#ifdef WIN32
+	[[unlikely]]
+#endif
+	// this should never fail on PC
+	if (window.render({ 0,0,0,0 }, this->destRect, this->texture))
+		return;
+
+	(*this) = TextureDictionary::reloadST(window, this->path);
+	window.render({ 0,0,0,0 }, this->destRect, this->texture);
 }
 
-void autoTexture::unInit(){
-    if (tex == nullptr) return;
-    this->sprite.x = 0;
-    this->sprite.y = 0;
-    this->sprite.w = 0;
-    this->sprite.h = 0;
-    this->textureRegion.x = 0;
-    this->textureRegion.y = 0;
-    this->textureRegion.w = 0;
-    this->textureRegion.h = 0;
-    SDL_DestroyTexture(tex);
-    tex = nullptr;
+
+
+
+void Sprite::load(RenderWindow& window, std::string path, [[maybe_unused]] int32_t x, [[maybe_unused]] int32_t y, [[maybe_unused]] uint8_t sections) {
+		(*this) = TextureDictionary::getSprite(window, path);
 }
 
-autoTexture::~autoTexture() {
-    //std::cout << "this shouldnt happen" << std::endl;
-    if (tex == nullptr) return;
-    SDL_DestroyTexture(tex);
-}
+void Sprite::render(RenderWindow& window) {
+	// this reloading is only neccesary when on android as when you rotate the screen the texture is for some reason not tied to the renderer anymore
+#ifdef WIN32
+	[[unlikely]]
+#endif
+	if (window.render(this->srcRect, this->destRect, this->texture->texture))
+		return;
 
-SDL_Texture* autoTexture::getTex() { return tex; }
-SDL_Rect autoTexture::getSprite() { return sprite; }
-SDL_Rect autoTexture::getTextureRegion() { return textureRegion; }
-
-void autoTexture::loadTexture(const char* p_filePath, RenderWindow &window) {
-    
-    this->tex = IMG_LoadTexture(window.renderer, p_filePath);
-    std::cout << SDL_GetError()<<std::endl;
-    if (this->tex == NULL)
-        std::cout << "Failed to load texture. Error: " << SDL_GetError() << std::endl;
+	(*this) = TextureDictionary::reloadSP(window, this->texture->path);
+	window.render(this->srcRect, this->destRect, this->texture->texture);
 
 }
 
-void autoTexture::modifyTex(Uint8 a) {
 
-    SDL_SetTextureAlphaMod(tex, a);
-   
+
+void SpriteSheet::load(RenderWindow& window, std::string path, int32_t x, int32_t y, uint8_t sections) {
+
+	(*this) = TextureDictionary::getSpriteSheet(window, path, x, y, sections);
+}
+
+void SpriteSheet::render(RenderWindow& window) {
+	// this reloading is only neccesary when on android as when you rotate the screen the texture is for some reason not tied to the renderer anymore
+#ifdef WIN32
+	[[unlikely]]
+#endif
+	if (window.render(this->srcRect, this->destRect, this->texture->texture))
+		return;
+
+	(*this) = TextureDictionary::reloadSS(window, this->texture->path, srcRect.x / tileSize, srcRect.y / tileSize, this->tileSize);
+	window.render(this->srcRect, this->destRect, this->texture->texture);
+}
+
+void SpriteSheet::updateSection(uint8_t x, uint8_t y) {
+	this->srcRect = { tileSize * x, tileSize * y, tileSize, tileSize };
+	this->destRect = { 0, 0, tileSize, tileSize };
+}
+
+Texture* TextureDictionary::loadTexture(RenderWindow& window, std::string_view p_filePath) {
+	return new Texture(window, p_filePath);
+}
+
+
+
+
+SurfaceTexture TextureDictionary::getSurfaceTexture(RenderWindow& window, std::string_view path) {
+	// no search for if its in the dictionary, as surface textures are user independent
+	return SurfaceTexture(window, path.data());
+}
+
+SurfaceTexture TextureDictionary::reloadST(RenderWindow& window, std::string_view path) {
+	return getSurfaceTexture(window, path);
+}
+
+
+
+
+SpriteSheet TextureDictionary::getSpriteSheet(RenderWindow& window, std::string_view path, uint32_t x, uint32_t y, uint8_t sections) {
+
+	if (textures.find(path.data()) == textures.end())
+	{
+		// element not found 
+		// this is the first time we encounter this path, generate a new Texture*
+		textures[path.data()] = loadTexture(window, path.data());
+	}
+	return SpriteSheet(x, y, sections, textures[path.data()], path.data());
+}
+
+SpriteSheet TextureDictionary::reloadSS(RenderWindow& window, std::string_view path, uint32_t x, uint32_t y, uint8_t sections) {
+	(*textures.at(path.data())) = Texture(window, path);
+	return getSpriteSheet(window, path, x, y, sections);
+}
+
+
+Sprite TextureDictionary::getSprite(RenderWindow& window, std::string_view path) {
+
+	if (textures.find(path.data()) == textures.end())
+	{
+		// element not found 
+		// this is the first time we encounter this path, generate a new Texture*
+		textures[path.data()] = loadTexture(window, path.data());
+	}
+	return Sprite(window, path.data(), textures[path.data()]);
+}
+
+Sprite TextureDictionary::reloadSP(RenderWindow& window, std::string_view path) {
+	textures.erase(path.data());
+	(*textures.at(path.data())) = Texture(window, path);
+	return getSprite(window, path);
 }

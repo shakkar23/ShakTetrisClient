@@ -6,6 +6,7 @@
 #include <type_traits>
 
 #define DLL extern "C" __declspec(dllexport)
+
 #define PLUGIN_SETUP(name, author, description) PLUGIN_SETUP_IMPL(PLUGIN_NAME, name, author, description)
 
 #define PLUGIN_SETUP_IMPL(namespaceName, name, author, description)                                \
@@ -19,7 +20,7 @@
 
 namespace Shakkar {
     using std::derived_from;
-    //tamplate stuff to make sure they are definitely being derived from my base class with nothing in it
+    //tamplate stuff to make sure they are definitely being derived from my base class
 
     
     struct Plugins {

@@ -67,19 +67,22 @@ void RenderWindow::cleanUp() { SDL_DestroyWindow(this->window); }
 
 void RenderWindow::clear() { SDL_RenderClear(this->renderer); }
 
-void RenderWindow::render(autoTexture& p_entity) {
-  SDL_Rect src = p_entity.getTextureRegion();
+// passing in a src with all zeros will grab the entire texture
+// returns weather it worked or not
+bool RenderWindow::render(SDL_Rect src, SDL_Rect dst, SDL_Texture* tex) {
 
-  SDL_Rect dst = p_entity.getSprite();
-  auto checkIfSet = [&](SDL_Rect box) {if ((box.x == 0) && (box.y == 0) && (box.w == 0) && (box.h == 0)) return true; else return false; };
-  
-  int error = SDL_RenderCopy(this->renderer, p_entity.getTex(), (checkIfSet(src)) ? NULL : &src, &dst);
-  if (error != 0)
-      ;// std::cout << "wtf" << std::endl << SDL_GetError() << std::endl;
-  else
-      ;//std::cout << "flushed" << std::endl;
- 
+    auto checkIfSet = [&](SDL_Rect box) {if ((box.x == 0) && (box.y == 0) && (box.w == 0) && (box.h == 0)) return true; else return false; };
+
+    auto err = SDL_RenderCopy(this->renderer, tex, (checkIfSet(src)) ? NULL : &src, &dst);
+
+    if (err != 0) {
+        SDL_Log("SDL2 Error: %s", SDL_GetError());
+        return false;
+    }
+    return true;
+
 }
+
 void RenderWindow::renderCopy(SDL_Texture* texture, const SDL_Rect* srcrect, const SDL_Rect* dstrect) {
     SDL_RenderCopy(renderer, texture, srcrect, dstrect);
 }
@@ -94,14 +97,11 @@ void RenderWindow::setWindowSize(int x, int y) {
     SDL_SetWindowSize(this->window, x, y);
 }
 
-void RenderWindow::renderFrame(std::vector<autoTexture*>& entities) {
-    // skip frames that cant be shown due to window not currently accepting frames to display
-    this->clear();
-    for (autoTexture* e : entities) {
-        this->render(*e);
-    }
-}
-
 SDL_Texture* RenderWindow::CreateTextureFromSurface(SDL_Surface* surface) {
     return SDL_CreateTextureFromSurface(this->renderer, surface);
+}
+
+
+SDL_Renderer* RenderWindow::getRenderer() {
+    return renderer;
 }

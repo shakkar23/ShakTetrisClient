@@ -12,22 +12,21 @@ uint8_t bagiterator{};
 class ppt {
 
 public:
-    ppt() {
+    constexpr ppt() {
         makebag();
     }
     u32 PPTRNG{};
     u8 bag[7]{};
-    u32 GetRand(u32 upperBound) {
-        u32 uVar1;
+    constexpr u32 GetRand(u32 upperBound) {
 
         PPTRNG = PPTRNG * 0x5d588b65 + 0x269ec3;
-        uVar1 = PPTRNG >> 0x10;
+        u32 uVar1 = PPTRNG >> 0x10;
         if (upperBound != 0) {
             uVar1 = uVar1 * upperBound >> 0x10;
         }
         return uVar1;
     }
-    u32 charToPiece(char piece) {
+    constexpr u32 charToPiece(char piece) {
         switch (piece) {
         case 'S':
             return 0;
@@ -47,7 +46,7 @@ public:
         return 0;
 
     }
-    void makebag() {
+    const void makebag() {
         bagiterator = 0;
         u8 buffer = 0;
         std::array<char, 7> pieces = { 'S', 'Z', 'J', 'L', 'T', 'O', 'I' };

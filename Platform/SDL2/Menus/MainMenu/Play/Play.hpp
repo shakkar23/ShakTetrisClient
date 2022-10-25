@@ -19,14 +19,15 @@ class PlayMenuGUI : public menuGUI {
 public:
 	PlayMenuGUI() = delete;
 	PlayMenuGUI(menuGUI* parentMenu);
-
+	~PlayMenuGUI();
+	TTF_Font* font{};
 	menuGUI* metaMenu;
 	Shakkar::Tetris* plugin;
-	~PlayMenuGUI();
-
 	void Init(RenderWindow& window);
 	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
 	void render(RenderWindow& window);
+	Sprite backGround;
+	int selectedGame = 0;
 
 private:
 	bool pluginReInit = false;

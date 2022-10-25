@@ -1,7 +1,7 @@
 #include "gameManager.hpp"
 
 void gameManager::Init(RenderWindow& window) {
-    loadPlugins(window);
+    PluginManager::loadPlugins(window);
     if (!mainMenu->isInitialized) 
         mainMenu->Init(window); 
     //auto p = (&Correct::games);

@@ -78,6 +78,11 @@ namespace Shakkar {
                 input.setMenuSelect();
             }
             
+
+             if (scan == SDL_Scancode::SDL_SCANCODE_ESCAPE)
+             {
+                 input.setMenuExit();
+             }
         }
         void unpressKey( const SDL_Scancode scan, Shakkar::inputBitmap &input) {
             if (scan == SDL_Scancode::SDL_SCANCODE_A)
@@ -146,9 +151,14 @@ namespace Shakkar {
             }
 
              if (scan == SDL_Scancode::SDL_SCANCODE_RETURN)
-            {
-                input.unsetMenuSelect();
-            }
+             {
+                 input.unsetMenuSelect();
+             }
+
+             if (scan == SDL_Scancode::SDL_SCANCODE_ESCAPE)
+             {
+                 input.unsetMenuExit();
+             }
 
 
         }

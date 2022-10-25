@@ -21,10 +21,10 @@ public:
 	mainMenuGUI(RenderWindow& window);
 	mainMenuGUI(menuGUI* parentMenu);
 
-	autoTexture background; 
-	autoTexture playButton;
-	autoTexture settingsButton; 
-	autoTexture exitButton;
+	Sprite background; 
+	SurfaceTexture playButton;
+	SurfaceTexture settingsButton; 
+	SurfaceTexture exitButton;
 	menuGUI* metaMenu;
 	menuGUI* subMenu;
 	~mainMenuGUI();

@@ -21,10 +21,10 @@ public:
 	settingsMenuGUI(RenderWindow& window);
 	settingsMenuGUI(menuGUI * parentMenu);
 
-	autoTexture background;
-	autoTexture playButton;
-	autoTexture settingsButton;
-	autoTexture exitButton;
+	SurfaceTexture background;
+	SurfaceTexture playButton;
+	SurfaceTexture settingsButton;
+	SurfaceTexture exitButton;
 	menuGUI* metaMenu;
 	menuGUI* subMenu;
 	~settingsMenuGUI();
@@ -34,6 +34,7 @@ public:
 	void render(RenderWindow& window);
 	
 private:
+	std::vector<SurfaceTexture*>texs;
 	uint_fast8_t highlighted{};
 	const int numberOfOptions = 3;
 	bool isEntered = false;

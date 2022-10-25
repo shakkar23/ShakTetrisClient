@@ -26,7 +26,9 @@
         }                                                                                                \
     void hex::plugin::namespaceName::internal::initializePlugin()
 
+class PlayMenuGUI;
 class Plugin {
+    friend PlayMenuGUI;
 public:
     Plugin(std::string_view path);
     Plugin(const Plugin&) = delete;

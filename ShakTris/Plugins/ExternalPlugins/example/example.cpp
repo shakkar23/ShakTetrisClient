@@ -4,10 +4,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-demo::demo() : Shakkar::Tetris("bruh") {
+demo::demo() : Shakkar::Tetris() {
     
     isPlaying = true;
 }
+
+//override
 void demo::Init(RenderWindow& window) {
     game.Init(window);
 
@@ -21,6 +23,7 @@ void demo::Init(RenderWindow& window) {
 
 }
 
+//override
 void demo::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
     
     if ((!prevInput.menuSelect) && (input.menuSelect))
@@ -29,17 +32,15 @@ void demo::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
     game.gameLogic(input, prevInput);
 }
 
+//override
 void demo::render(RenderWindow& window)  {
     
     game.render(window);
 }
 
 
-
-PLUGIN_SETUP("example", "Shakkar23", "ok so basically this is an example and its for example purposes, and its an example that is used for being an example") {
-    printf("initializing example plugin...\n");
-    
+////         name of plugin     author           description?
+PLUGIN_SETUP("example",         "Shakkar23",    "example plugin lets GOOOO") {
     Shakkar::Plugins::addorig<demo>();
     Shakkar::Plugins::getEntries().back()->Init((*(RenderWindow*)window));
-    
 }

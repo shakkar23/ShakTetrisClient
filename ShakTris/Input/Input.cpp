@@ -1,8 +1,9 @@
 
 #include "Input.hpp"
 namespace Shakkar {
-    inputBitmap::inputBitmap() : left(0), right(0), rotRight(0), rotLeft(0), rot180(0), hold(0), hardDrop(0), softDrop(0), 
-		menuUp(0), menuDown(0), menuLeft(0), menuRight(0), menuSelect(0) {}
+	inputBitmap::inputBitmap() : left(false), right(false), rotRight(false), rotLeft(false), rot180(false),
+		hold(false), hardDrop(false), softDrop(false), sonicDrop(false), menuUp(false), menuDown(false),
+		menuLeft(false), menuRight(false), menuSelect(false), menuExit(false) {};
 	
 	void inputBitmap::setLeft()			{ this->left = true;		}
 	void inputBitmap::setRight()		{ this->right = true;		}
@@ -18,6 +19,7 @@ namespace Shakkar {
 	void inputBitmap::setMenuLeft()		{ this->menuLeft = true;	}
 	void inputBitmap::setMenuRight()	{ this->menuRight = true;	}
 	void inputBitmap::setMenuSelect()	{ this->menuSelect = true;	}
+	void inputBitmap::setMenuExit()		{ this->menuExit = true;	}
 
 	void inputBitmap::unsetLeft()		{ this->left = false;		}
 	void inputBitmap::unsetRight()		{ this->right = false;		}
@@ -33,5 +35,6 @@ namespace Shakkar {
 	void inputBitmap::unsetMenuLeft()	{ this->menuLeft = false;	} 
 	void inputBitmap::unsetMenuRight()	{ this->menuRight = false;	} 
 	void inputBitmap::unsetMenuSelect()	{ this->menuSelect = false;	}
+	void inputBitmap::unsetMenuExit()	{ this->menuExit = false;	}
 
 }
