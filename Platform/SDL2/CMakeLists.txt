@@ -66,7 +66,7 @@ endif()
 
 add_library(Registry SHARED ${REGISTRY_SOURCES})
 target_include_directories(Registry PUBLIC ${REGISTRY_INCLUDE})
-target_link_libraries(Registry PUBLIC SDL2::SDL2 SDL2::SDL2_image SDL2::SDL2_ttf)
+target_link_libraries(Registry PUBLIC SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 set_target_properties( 
 		Registry
     PROPERTIES

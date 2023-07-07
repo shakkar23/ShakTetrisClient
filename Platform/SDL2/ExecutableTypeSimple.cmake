@@ -1,13 +1,13 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(SDL2 REQUIRED)
-find_package(SDL2-image REQUIRED)
-find_package(SDL2-ttf REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 set(PLATFORM_LIBRARIES
 	SDL2::SDL2
-	SDL2::SDL2_image
-	SDL2::SDL2_ttf
+	SDL2_image::SDL2_image
+	SDL2_ttf::SDL2_ttf
 	${CMAKE_DL_LIBS}
 )
 

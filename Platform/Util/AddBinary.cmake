@@ -204,8 +204,6 @@ function(AddBinary NAME TYPE)
 		add_library(${NAME} SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
 	elseif(${TYPE} STREQUAL PLUGIN)
 		add_library(${NAME} SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
-	elseif(${TYPE} STREQUAL BRUH)
-		add_library(${NAME} SHARED ${SOURCES}) # yeah this is kinda windows specific :/ other systems use other things
 	endif()
 	target_include_directories(${NAME} PUBLIC ${INCLUDE_DIRS})
 	target_link_libraries(${NAME} ${LIBRARIES})

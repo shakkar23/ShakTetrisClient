@@ -38,5 +38,8 @@ set(GAME_HEADERS
 )
 
 add_subdirectory("${SRC}/Platform/${PLATFORM_NAME}")
- set(CMAKE_INSTALL_BINDIR ".")
+set(CMAKE_INSTALL_BINDIR ".")
 include("${SRC}/ShakTris/Plugins/ExternalPlugins/plugin-helper.cmake")
+
+# Move the assets directory to the binary output directory
+file(COPY "${CMAKE_SOURCE_DIR}/Asset" DESTINATION "${CMAKE_BINARY_DIR}/bin")
