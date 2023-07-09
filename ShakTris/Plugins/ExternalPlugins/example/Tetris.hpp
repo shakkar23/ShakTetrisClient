@@ -4,6 +4,7 @@
 #include "../../../../Platform/SDL2/headers/RenderWindow.hpp"
 #include "../../../../Platform/SDL2/headers/Game.hpp"
 #include "../../../../Platform/SDL2/headers/entity.hpp"
+#include "../../../../Platform/SDL2/Audio/Audio.hpp"
 #include "combo_table.hpp"
 #include "damageTable.hpp"
 #include "ppt.h"
@@ -620,7 +621,7 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
         for (auto& row : board.board) {
             for (auto& mino : row)
             {
-                if ((mino == empty))
+                if (mino == empty)
                     continue;
                 else {
                     perfectCleared = false;

@@ -24,24 +24,27 @@ set(PLATFORM_HEADERS
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Selection/Selection.hpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Settings/Settings.hpp"
 	"${SRC}/Platform/SDL2/gameManager/gameManager.hpp"
+	"${SRC}/Platform/SDL2/Audio/Audio.hpp"
 	)
 
 set(REGISTRY_HEADERS 
 	"${SRC}/Platform/SDL2/headers/Game.hpp"
 	"${SRC}/Platform/SDL2/headers/RenderWindow.hpp"
+	"${SRC}/Platform/SDL2/Audio/Audio.hpp"
 	"${SRC}/ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
 	"${SRC}/ShakTris/Plugins/PluginManager.hpp"
-	)
-	set(REGISTRY_INCLUDE 
-	"${SRC}/Platform/SDL2/headers"
-	"${SRC}/ShakTris/Plugins"
-	)
+)
+set(REGISTRY_INCLUDE 
+"${SRC}/Platform/SDL2/headers"
+"${SRC}/ShakTris/Plugins"
+)
 
 
 set(REGISTRY_SOURCES 
 	"${SRC}/ShakTris/Plugins/PluginHeaders/PluginRegistry.cpp"
 	"${SRC}/ShakTris/Plugins/PluginManager.cpp"
-	)
+	"${SRC}/Platform/SDL2/Audio/Audio.cpp"
+)
 
 
 set(ICON_DIR "${CMAKE_SOURCE_DIR}/Asset/Icon")

@@ -25,7 +25,7 @@ public:
     Plugin(std::string_view path);
     Plugin(const Plugin&) = delete;
     Plugin(Plugin&& other) noexcept;
-    Plugin() {}
+    Plugin() = default;
     ~Plugin();
 
     void initializePlugin(RenderWindow& window) const;

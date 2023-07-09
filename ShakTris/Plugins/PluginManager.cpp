@@ -1,4 +1,5 @@
 #include "PluginManager.hpp"
+#include "../Audio/Audio.hpp"
 #include<iostream>
 #include <chrono>
 
