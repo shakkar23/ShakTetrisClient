@@ -1,17 +1,40 @@
 #include "Play.hpp"
 
+#include "../../inipp/inipp/inipp.h"
+#include <fstream>
+
 PlayMenuGUI::PlayMenuGUI(menuGUI* parentMenu) {
 	this->font = TTF_OpenFont("Asset/Sprites/PlayMenu/font.ttf", 50);
 	isInitialized = false;
 	this->metaMenu = parentMenu;
 	plugin = nullptr;
+
+
+
+	inipp::Ini<char> ini;
+	std::ifstream is("config.ini");
+	ini.parse(is);
+
+	auto worked = inipp::get_value(ini.sections["Controls"], "das_setting", das);
+	if (!worked) {
+		ini.sections["Controls"]["das_setting"] = "100";
+		das = 100;
+	}
+	auto worked2 = inipp::get_value(ini.sections["Controls"], "arr_setting", arr);
+	if (!worked2) {
+		ini.sections["Controls"]["arr_setting"] = "0";
+		arr = 0;
+	}
+	if (!worked || !worked2) {
+		std::ofstream os("config.ini");
+		ini.generate(os);
+	}
 }
 
 PlayMenuGUI::~PlayMenuGUI() {
 	if (font != nullptr) {
 		TTF_CloseFont(font);
 	}
-		
 }
 //grabs a plugin from the entries that are registered
 void PlayMenuGUI::Init(RenderWindow& window) {
@@ -21,7 +44,6 @@ void PlayMenuGUI::Init(RenderWindow& window) {
 
 	pluginReInit = false;
 	isInitialized = true;
-	return;
 }
 
 void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
@@ -38,6 +60,7 @@ void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 		}
 		if (justPressed(prevInput.menuSelect ,input.menuSelect)) {
 			plugin = Shakkar::Plugins::getEntries()[selectedGame];
+			plugin->updateSettings(das, arr);
 			pluginReInit = true;
 		}
 		if (justPressed(prevInput.menuExit, input.menuExit)) {

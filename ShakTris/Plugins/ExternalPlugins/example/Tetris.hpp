@@ -282,8 +282,6 @@ public:
 
 constexpr int_fast16_t matrixXPos = (((DEFAULT_SCREEN_WIDTH - (224 * 3)) / 3) - 50);
 constexpr int_fast16_t matrixYPos = (((DEFAULT_SCREEN_HEIGHT - (299 * 3)) / 3) - 100);
-constexpr uint_fast16_t dasSetting = 80; // these are in miliseconds
-constexpr uint_fast16_t arrSetting = 0;
 constexpr int softdropCountdownMAX = (UPDATES_A_SECOND);
 constexpr uint_fast8_t pieceSpawnDelayMAX = 0;
 constexpr uint_fast16_t lockDelayMAX = (UPDATES_A_SECOND);
@@ -292,6 +290,9 @@ constexpr auto backToBackBonus = 2;
 class Game
 {
 public:
+// these are in miliseconds
+    uint_fast16_t dasSetting = 80; 
+    uint_fast16_t arrSetting = 0;
 
     Game();
     ~Game();

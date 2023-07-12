@@ -9,6 +9,10 @@ demo::demo() : Shakkar::Tetris() {
     isPlaying = true;
 }
 
+void demo::updateSettings(uint32_t das, uint32_t arr) {
+    game.dasSetting = das;
+    game.arrSetting = arr;
+}
 //override
 void demo::Init(RenderWindow& window) {
     game.Init(window);

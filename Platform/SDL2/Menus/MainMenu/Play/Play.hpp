@@ -31,5 +31,10 @@ public:
 
 private:
 	bool pluginReInit = false;
+
+
+public:
+	int das = 0;
+	int arr = 0;
 };
 #endif

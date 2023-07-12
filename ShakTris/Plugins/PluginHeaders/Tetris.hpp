@@ -1,6 +1,7 @@
 #pragma once
 #include<array>
 #include <string>
+#include <stdint.h>
 #ifndef TETRIS
 #define TETRIS
 #include "../../../Platform/SDL2/headers/RenderWindow.hpp"
@@ -14,6 +15,7 @@ namespace Shakkar {
     public:
         explicit Tetris(){}
         virtual void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) = 0;
+        virtual void updateSettings(uint32_t das, uint32_t arr) = 0;
         virtual void render(RenderWindow& window) = 0;
         //this needs to reload the game when called after the first time called
         // TODO: change later for reloading to be a stand alone function
