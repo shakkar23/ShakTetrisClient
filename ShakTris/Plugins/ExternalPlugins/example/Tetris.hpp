@@ -210,7 +210,7 @@ public:
     }
 
     void setPiece(const Piece& piece) {
-        new Shakkar::autoAudio("Asset/Sounds/Sound.wav", (128 / 5));
+        Shakkar::playAudio("Asset/Sounds/Sound.wav", (128 / 5));
 
         for (auto& coord : piece.piecedef)
         {
