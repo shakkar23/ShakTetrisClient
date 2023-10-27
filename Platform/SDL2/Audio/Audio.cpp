@@ -1,4 +1,5 @@
 #include "Audio.hpp"
+#include "AudioManager.hpp"
 
 #include <vector>
 #include <string>
@@ -40,7 +41,22 @@ namespace Shakkar {
         // copy assignment
         Audio& operator=(const Audio& other) = delete;
         // move assignment
-        Audio& operator=(Audio&& other) = delete;
+        Audio& operator=(Audio&& other) {
+            if (this != &other) {
+				wav_length = other.wav_length;
+				wav_buffer = other.wav_buffer;
+				wav_spec = other.wav_spec;
+				audio_pos = other.audio_pos;
+				audio_len = other.audio_len;
+				volume = other.volume;
+				other.wav_length = 0;
+				other.wav_buffer = nullptr;
+				other.audio_pos = nullptr;
+				other.audio_len = 0;
+			}
+			return *this;
+
+        }
 
 
     private:
@@ -61,31 +77,6 @@ namespace Shakkar {
 
     }
 
-
-
-
-    class AudioManager
-    {
-    private:
-        //wont be played although still needs to exist
-        const char* mus2 = "Asset/Sounds/Sound.wav";
-
-        static Uint32 wav_length; // length of our sample
-        static Uint8* wav_buffer; // buffer containing our audio file
-
-        static SDL_AudioSpec wav_spec; // the specs of our piece of music
-    public:
-        AudioManager();
-        ~AudioManager();
-    private:
-
-        // audio callback function
-        // here you have to copy the data of your audio buffer into the
-        // requesting audio buffer (stream)
-        // you should only copy as much as the requested length (len)
-        static void callback(void* userdata, Uint8* stream, int len);
-
-    };
 
 
     Uint32 AudioManager::wav_length = {}; // length of our sample

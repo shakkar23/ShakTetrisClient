@@ -9,7 +9,7 @@
 #include "Keyboard/Keyboard.hpp"
 #include "gameManager/gameManager.hpp"
 #include "Menus/Menus.hpp"
-#include "../../ShakTris/Plugins/PluginManager.hpp"
+#include "Audio/AudioManager.hpp"
 
 int main(int argc, char* args[]) {
 	if (SDL_Init(SDL_INIT_AUDIO) != 0)
@@ -27,7 +27,7 @@ int main(int argc, char* args[]) {
 
 	RenderWindow window("Shaktris", 480 * 2, 272 * 2);
 	GameManager.Init(window);
-	AudioManager manager;
+	Shakkar::AudioManager manager;
 	Shakkar::inputBitmap input = Shakkar::inputBitmap();
 	Shakkar::inputBitmap prevInput = Shakkar::inputBitmap();
 
