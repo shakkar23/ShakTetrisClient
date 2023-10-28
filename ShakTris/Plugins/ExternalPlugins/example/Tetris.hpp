@@ -2,7 +2,7 @@
 
 #include "PieceDefs.hpp"
 #include "../../../../Platform/SDL2/headers/RenderWindow.hpp"
-#include "../../../../Platform/SDL2/headers/Game.hpp"
+#include "../../../../Platform/SDL2/headers/Engine.hpp"
 #include "../../../../Platform/SDL2/headers/entity.hpp"
 #include "../../../../Platform/SDL2/Audio/Audio.hpp"
 #include "combo_table.hpp"

@@ -5,7 +5,7 @@
 
 #include "headers/entity.hpp"
 #include "headers/RenderWindow.hpp"
-#include "headers/Game.hpp"
+#include "headers/Engine.hpp"
 
 RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
     : window(NULL), renderer(NULL) {

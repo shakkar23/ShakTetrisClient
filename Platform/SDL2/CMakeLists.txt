@@ -1,7 +1,7 @@
 
 set(PLATFORM_SOURCES
 	${GAME_SOURCES}
-	"${SRC}/Platform/SDL2/Game.cpp"
+	"${SRC}/Platform/SDL2/Engine.cpp"
 	"${SRC}/Platform/SDL2/RenderWindow.cpp"
 	"${SRC}/Platform/SDL2/entity.cpp"
 	"${SRC}/Platform/SDL2/Keyboard/Keyboard.cpp"

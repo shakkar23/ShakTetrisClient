@@ -5,7 +5,7 @@
 #ifndef TETRIS
 #define TETRIS
 #include "../../../Platform/SDL2/headers/RenderWindow.hpp"
-#include "../../../Platform/SDL2/headers/Game.hpp"
+#include "../../../Platform/SDL2/headers/Engine.hpp"
 #include "../../../ShakTris/Input/Input.hpp"
 
 class PlayMenuGUI;
