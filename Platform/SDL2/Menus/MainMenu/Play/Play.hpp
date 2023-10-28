@@ -13,25 +13,22 @@
 #include "ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
 
 
-class PlayMenuGUI : public menuGUI {
+class PlayMenuGUI : public GUI {
 
 
 public:
-	PlayMenuGUI() = delete;
-	PlayMenuGUI(menuGUI* parentMenu);
+	PlayMenuGUI();
 	~PlayMenuGUI();
 	TTF_Font* font{};
-	menuGUI* metaMenu;
 	Shakkar::Tetris* plugin;
-	void Init(RenderWindow& window);
-	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow& window);
+	void init(RenderWindow& window) override;
+	GUI_payload update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
+	void render(RenderWindow& window) override;
 	Sprite backGround;
 	int selectedGame = 0;
 
 private:
 	bool pluginReInit = false;
-
 
 public:
 	int das = 0;

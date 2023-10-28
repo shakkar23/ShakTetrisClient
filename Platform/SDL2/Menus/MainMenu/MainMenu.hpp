@@ -14,23 +14,19 @@
 
 class menuGUI;
 
-class mainMenuGUI : public menuGUI
+class mainMenuGUI : public GUI
 {
 public:
 	mainMenuGUI();
-	mainMenuGUI(RenderWindow& window);
-	mainMenuGUI(menuGUI* parentMenu);
+	~mainMenuGUI() = default;
 
 	Sprite background; 
 	SurfaceTexture playButton;
 	SurfaceTexture settingsButton; 
 	SurfaceTexture exitButton;
-	menuGUI* metaMenu;
-	menuGUI* subMenu;
-	~mainMenuGUI();
 
-	void Init(RenderWindow &window) override;
-	void menuLogic(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput) override;
+	void init(RenderWindow &window) override;
+	GUI_payload update(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput) override;
 	void render(RenderWindow &window) override;
 	
 private:
@@ -42,6 +38,7 @@ private:
 		Exit,
 		numberOfOptions
 	};
+	std::vector<SurfaceTexture*> texs;
 };
 
 

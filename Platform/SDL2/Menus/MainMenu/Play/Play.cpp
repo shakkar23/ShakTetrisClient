@@ -3,13 +3,10 @@
 #include "../../inipp/inipp/inipp.h"
 #include <fstream>
 
-PlayMenuGUI::PlayMenuGUI(menuGUI* parentMenu) {
+PlayMenuGUI::PlayMenuGUI() {
 	this->font = TTF_OpenFont("Asset/Sprites/PlayMenu/font.ttf", 50);
 	isInitialized = false;
-	this->metaMenu = parentMenu;
 	plugin = nullptr;
-
-
 
 	inipp::Ini<char> ini;
 	std::ifstream is("config.ini");
@@ -31,13 +28,16 @@ PlayMenuGUI::PlayMenuGUI(menuGUI* parentMenu) {
 	}
 }
 
+
 PlayMenuGUI::~PlayMenuGUI() {
 	if (font != nullptr) {
 		TTF_CloseFont(font);
 	}
 }
+
+
 //grabs a plugin from the entries that are registered
-void PlayMenuGUI::Init(RenderWindow& window) {
+void PlayMenuGUI::init(RenderWindow& window) {
 
 	this->backGround.load(window, "Asset/Sprites/PlayMenu/black169.png");
 	backGround.destRect = { 0,0,DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
@@ -46,7 +46,8 @@ void PlayMenuGUI::Init(RenderWindow& window) {
 	isInitialized = true;
 }
 
-void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+
+GUI_payload PlayMenuGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
 	
 	if (this->plugin == nullptr) {
 		if (justPressed(prevInput.menuDown, input.menuDown)) {
@@ -64,31 +65,27 @@ void PlayMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& p
 			pluginReInit = true;
 		}
 		if (justPressed(prevInput.menuExit, input.menuExit)) {
-			metaMenu->submenuWasDeleted = true;
-			delete this;
+			return { nullptr, false };
 		}
 	}
 	else [[unlikely]] if (!plugin->isPlaying) {
 
 		plugin->isPlaying = true;
 		plugin = nullptr; 
-		submenuWasDeleted = true;
 	}
 	else {
 		plugin->gameLogic(input, prevInput);
 	}
+	return { nullptr, true };
 }
 
 void PlayMenuGUI::render(RenderWindow& window) {
-
 	[[unlikely]] if (pluginReInit) {
 		plugin->Init(window);
 		pluginReInit = false;
 	}
 	else if (plugin)
 		plugin->render(window);
-	else if (!isInitialized)
-		this->Init(window);
 	else {
 
 		backGround.render(window);

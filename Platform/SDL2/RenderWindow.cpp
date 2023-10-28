@@ -24,28 +24,28 @@ RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
 
 
   SDL_Surface* surface;     // Declare an SDL_Surface to be filled in with pixel data from an image file
-#define BLACK 0x0000
-#define WHITE 0x0fff
+#define O 0x0000
+#define _ 0x0fff
   Uint16 pixels[16 * 16] = {  // ...or with raw pixel data:
-    WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, BLACK, WHITE, WHITE, WHITE,
-    WHITE, WHITE, BLACK, BLACK, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, WHITE,
-    WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, BLACK, BLACK, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
-    WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE
+    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, O, O, O, O, O, _, _, _, _, _,
+    _, _, _, _, _, O, _, _, _, _, _, O, _, _, _, _,
+    _, _, _, _, O, _, _, _, _, _, _, O, _, _, _, _,
+    _, _, _, _, O, _, _, _, _, _, O, _, O, _, _, _,
+    _, _, O, O, _, _, O, _, _, _, _, _, O, O, _, _,
+    _, _, _, O, _, _, _, _, O, O, _, _, O, _, _, _,
+    _, _, _, O, _, _, _, _, O, O, _, O, O, _, _, _,
+    _, _, _, O, _, _, _, _, _, _, _, O, _, _, _, _,
+    _, _, _, O, _, _, _, _, _, _, _, O, _, _, _, _,
+    _, _, _, _, O, _, _, _, _, O, O, _, _, _, _, _,
+    _, _, _, _, _, O, O, O, O, _, _, O, _, _, _, _,
+    _, _, _, _, _, O, _, _, _, _, _, O, O, _, _, _,
+    _, _, _, _, _, O, _, _, _, _, _, _, _, _, _, _,
+    _, _, _, _, O, O, _, _, _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _
   };
-#undef WHITE
-#undef BLACK
+#undef _
+#undef O
   surface = SDL_CreateRGBSurfaceFrom(pixels, 16, 16, 16, 16 * 2, 0x0f00, 0x00f0, 0x000f, 0xf000);
 
   // The icon is attached to the window pointer

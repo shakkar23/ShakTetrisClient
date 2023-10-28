@@ -10,23 +10,23 @@
 #include "Platform/SDL2/headers/RenderWindow.hpp"
 #include "ShakTris/Input/Input.hpp"
 
-#include <vector>
+#include <utility>
 
-
+class GUI;
+typedef std::pair<GUI*, bool> GUI_payload;
 //default class for menus,  you will need this for making new sub menus in the game
-class menuGUI
+class GUI
 {
 public:
-	
-	std::vector<SurfaceTexture*> texs; // this should have what you want to display, the 0th index being the bottom most texture (background)
-
-	virtual void Init(RenderWindow& window) = 0; // will be called to initialize the class, please set isInitialized as true when this is called
-	virtual void menuLogic(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput) = 0; // use the menu variables as the controls
+	virtual void init(RenderWindow& window) = 0; // will be called to initialize the class, please set isInitialized as true when this is called
+	virtual GUI_payload update(Shakkar::inputBitmap &input, Shakkar::inputBitmap& prevInput) = 0; // use the menu variables as the controls
 	virtual void render(RenderWindow& window) = 0;
 	bool isInitialized = false;
-	bool submenuWasDeleted=false;
 private:
 
 };
+
+// GUI * is a pointer to the GUI class you just made
+// bool is whether or not the current menu should be deleted
 
 #endif

@@ -1,29 +1,32 @@
 #include "gameManager.hpp"
 
-void gameManager::Init(RenderWindow& window) {
-    PluginManager::loadPlugins(window);
-    if (!mainMenu->isInitialized) 
-        mainMenu->Init(window); 
-    //auto p = (&Correct::games);
-    submenuWasDeleted = false;
-}
+bool gameManager::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+    // get last element
+    auto last = subGUIs.back();
 
-bool gameManager::gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
-    if (!submenuWasDeleted) {
-        this->menuLogic(input, prevInput);
-        return true; // worked
-    }
-    else {
-        mainMenu = nullptr;
-        return false; // mainmenu was exited, exit game
-    }
+    GUI_payload payload = last->update(input, prevInput);
 
-}
-void gameManager::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
-        mainMenu->menuLogic(input, prevInput);
+    if (!payload.second)
+    {
+        auto iter = std::find(subGUIs.begin(), subGUIs.end(), payload.first);
+
+        if (iter != subGUIs.end())
+        {
+			subGUIs.erase(iter);
+			delete payload.first;
+			payload.first = nullptr;
+		}
+    }
+    else if (payload.first != nullptr)
+    {
+		subGUIs.push_back(payload.first);
+	}
+    return true;
 }
 void gameManager::render(RenderWindow &window) {
-    mainMenu->render(window);
+    if (!subGUIs.back()->isInitialized) {
+        subGUIs.back()->init(window);
+    }
+    subGUIs.back()->render(window);
     window.display();
 }
-gameManager GameManager;

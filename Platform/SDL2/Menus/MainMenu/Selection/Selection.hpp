@@ -14,20 +14,18 @@
 #include "ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
 
 
-class SelectionGUI : public menuGUI {
+class SelectionGUI : public GUI {
 
 
 public:
-	SelectionGUI() = delete;
-	SelectionGUI(menuGUI* parentMenu);
+	SelectionGUI();
 
-	menuGUI* metaMenu;
 	Shakkar::Tetris* plugin;
 	~SelectionGUI();
 
-	void Init(RenderWindow& window);
-	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow& window);
+	void init(RenderWindow& window) override;
+	GUI_payload update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
+	void render(RenderWindow& window) override;
 
 private:
 	bool pluginReInit = false;

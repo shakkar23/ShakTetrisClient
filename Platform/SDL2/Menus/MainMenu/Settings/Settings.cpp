@@ -1,27 +1,7 @@
 #include "Settings.hpp"
 
-//UHHHHHHHHHHHHHHHHHHHHHHHHHH
 
-//settingsMenuGUI::settingsMenuGUI() :
-//	subMenu(nullptr) {
-//	isInitialized = false;
-//}
-settingsMenuGUI::settingsMenuGUI(menuGUI *parentMenu) :
-	subMenu(nullptr) {
-	isInitialized = false;
-	this->metaMenu = parentMenu;
-}
-settingsMenuGUI::settingsMenuGUI(RenderWindow& window) :
-	subMenu(nullptr) {
-	isInitialized = false;
-	Init(window);
-}
-settingsMenuGUI::~settingsMenuGUI() {
-	if (subMenu != nullptr) {
-		delete subMenu;
-	}
-}
-void settingsMenuGUI::Init(RenderWindow& window) {
+void settingsMenuGUI::init(RenderWindow& window) {
 	if (!isInitialized) {
 		background.load(window, "Asset/Sprites/invertedshak.png");
 		settingsButton.load(window, "Asset/Sprites/MainMenu/settingsText.png");
@@ -47,90 +27,74 @@ void settingsMenuGUI::Init(RenderWindow& window) {
 	return;
 }
 
-void settingsMenuGUI::menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+GUI_payload settingsMenuGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
 	// in this scenario the top option is 0, and you increment to go down
 
-	if (submenuWasDeleted) {
-		subMenu = nullptr;
-		submenuWasDeleted = false;
+	if (input.menuDown && !prevInput.menuDown) {
+		highlighted = (highlighted + 1) % numberOfOptions;
 	}
-	if (this->subMenu == nullptr) {
-		if (input.menuDown && !prevInput.menuDown) {
-			highlighted = (highlighted + 1) % numberOfOptions;
+	if (input.menuUp && !prevInput.menuUp) { //prevent menu underflow
+		if (highlighted == 0) {
+			highlighted = numberOfOptions;
 		}
-		if (input.menuUp && !prevInput.menuUp) { //prevent menu underflow
-			if (highlighted == 0) {
-				highlighted = numberOfOptions;
-			}
-			highlighted = (highlighted - 1) % numberOfOptions;
-		}
-		if (input.menuSelect && !prevInput.menuSelect) {
-			switch ((GameState)highlighted)
-			{
-			case settingsMenuGUI::Play:
-				subMenu = new PlayMenuGUI(this);
-				break;
-			case settingsMenuGUI::Settings:
-				subMenu = new mainMenuGUI(this);
-				
-				break;
-			case settingsMenuGUI::Exit:
-				metaMenu->submenuWasDeleted = true;
-				delete this;
-				break;
-			default:
-				break;
-			}
-		}
+		highlighted = (highlighted - 1) % numberOfOptions;
 	}
-	else { subMenu->menuLogic(input, prevInput); }
-}
-
-void settingsMenuGUI::render(RenderWindow& window) {
-	if (this->subMenu == nullptr) {
-		Uint8 r = 0, g = 0, b = 255;
-		Uint8 rDud = 255, gDud = 255, bDud = 255;
+	if (input.menuSelect && !prevInput.menuSelect) {
 		switch ((GameState)highlighted)
 		{
 		case settingsMenuGUI::Play:
-			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
-				r, g, b);
-			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
-				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
-				rDud, gDud, bDud);
-
+			return{ new PlayMenuGUI() , true};
 			break;
 		case settingsMenuGUI::Settings:
+			return{ new mainMenuGUI(), true };
 
-			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
-				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
-				r, g, b);
-			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
-				rDud, gDud, bDud);
 			break;
 		case settingsMenuGUI::Exit:
-
-			SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
-				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
-				rDud, gDud, bDud);
-			SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
-				r, g, b);
+			return { nullptr, false };
 			break;
 		default:
 			break;
 		}
-		for (auto* e : texs) {
-			e->render(window);
-		}
 	}
-	else if (!subMenu->isInitialized) {
-		subMenu->Init(window);
-		subMenu->render(window);
+	return { nullptr, true };
+}
+
+void settingsMenuGUI::render(RenderWindow& window) {
+	Uint8 r = 0, g = 0, b = 255;
+	Uint8 rDud = 255, gDud = 255, bDud = 255;
+	switch ((GameState)highlighted)
+	{
+	case settingsMenuGUI::Play:
+		SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
+			r, g, b);
+		SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
+			rDud, gDud, bDud);
+		SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
+			rDud, gDud, bDud);
+
+		break;
+	case settingsMenuGUI::Settings:
+
+		SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
+			rDud, gDud, bDud);
+		SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
+			r, g, b);
+		SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
+			rDud, gDud, bDud);
+		break;
+	case settingsMenuGUI::Exit:
+
+		SDL_SetTextureColorMod(&(*this->texs[(Play + 1)]->texture),
+			rDud, gDud, bDud);
+		SDL_SetTextureColorMod(&(*this->texs[(Settings + 1)]->texture),
+			rDud, gDud, bDud);
+		SDL_SetTextureColorMod(&(*this->texs[(Exit + 1)]->texture),
+			r, g, b);
+		break;
+	default:
+		break;
 	}
-	else {
-		subMenu->render(window);
+	for (auto* e : texs) {
+		e->render(window);
 	}
 }

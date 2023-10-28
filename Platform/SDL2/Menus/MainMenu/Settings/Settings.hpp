@@ -13,31 +13,29 @@
 
 
 
-class settingsMenuGUI : public menuGUI {
+class settingsMenuGUI : public GUI {
 
 
 public:
-	settingsMenuGUI() = delete;
-	settingsMenuGUI(RenderWindow& window);
-	settingsMenuGUI(menuGUI * parentMenu);
+	settingsMenuGUI() = default;
+	~settingsMenuGUI() = default;
 
 	SurfaceTexture background;
 	SurfaceTexture playButton;
 	SurfaceTexture settingsButton;
 	SurfaceTexture exitButton;
-	menuGUI* metaMenu;
-	menuGUI* subMenu;
-	~settingsMenuGUI();
 
-	void Init(RenderWindow& window);
-	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow& window);
+	void init(RenderWindow& window) override;
+	GUI_payload update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
+	void render(RenderWindow& window) override;
 	
 private:
 	std::vector<SurfaceTexture*>texs;
-	uint_fast8_t highlighted{};
+
 	const int numberOfOptions = 3;
+	uint_fast8_t highlighted{};
 	bool isEntered = false;
+
 	enum GameState {
 		Play,
 		Settings,

@@ -26,8 +26,11 @@ int main(int argc, char* args[]) {
 		std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
 
 	RenderWindow window("Shaktris", 480 * 2, 272 * 2);
-	GameManager.Init(window);
+
+	gameManager game_manager;
+
 	Shakkar::AudioManager manager;
+
 	Shakkar::inputBitmap input = Shakkar::inputBitmap();
 	Shakkar::inputBitmap prevInput = Shakkar::inputBitmap();
 
@@ -81,7 +84,7 @@ int main(int argc, char* args[]) {
 			last_time = now;
 
 			while (alpha > 1.0) {
-				if (!GameManager.gameLogic(input, prevInput)) {
+				if (!game_manager.update(input, prevInput)) {
 					gameRunning = false;
 					break;
 				}
@@ -90,7 +93,7 @@ int main(int argc, char* args[]) {
 				alpha -= 1.0;
 			}
 			if (gameRunning) {
-				GameManager.render(window);
+				game_manager.render(window);
 			}
 			else {
 				gameRunning = false;

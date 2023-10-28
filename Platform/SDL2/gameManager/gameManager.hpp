@@ -11,25 +11,19 @@
 
 
 // this is the gameManager, it redirects the thread to wherever it needs to go
-class gameManager : public menuGUI
+class gameManager
 {
 public:
-	menuGUI* mainMenu;
-	void Init(RenderWindow& window) override;
-	void menuLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
-	bool gameLogic(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
-	void render(RenderWindow &window) override;
+	// void Init(RenderWindow& window) override;
+	bool update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
+	void render(RenderWindow &window);
 
-	gameManager()
-	{
-		mainMenu = new mainMenuGUI(this);
-		isInitialized = true;
-		
+	gameManager(RenderWindow& window) { 
+		PluginManager::loadPlugins(window);
+		subGUIs.push_back(new mainMenuGUI());
 	}
 	~gameManager()
 	{
-		delete mainMenu;
-		mainMenu = nullptr;
 		unloadPlugins();
 	}
 private:
@@ -41,7 +35,7 @@ private:
 		Exit
 	};
 	GameState GameState = gameManager::GameState::MainMenu;
+	std::vector<GUI*> subGUIs;
 };
-extern gameManager GameManager;
 
 #endif
