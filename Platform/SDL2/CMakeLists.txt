@@ -14,7 +14,7 @@ set(PLATFORM_SOURCES
 )
 
 set(PLATFORM_HEADERS 
-	"${SRC}/Platform/SDL2/headers/Game.hpp"
+	"${SRC}/Platform/SDL2/headers/Engine.hpp"
 	"${SRC}/Platform/SDL2/headers/RenderWindow.hpp"
 	"${SRC}/Platform/SDL2/headers/entity.hpp"
 	"${SRC}/Platform/SDL2/Keyboard/Keyboard.hpp"
