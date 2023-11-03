@@ -29,7 +29,7 @@ GUI_payload SelectionGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitm
 		return { nullptr, false };
 	}
 	else { plugin->gameLogic(input, prevInput); }
-
+	return { nullptr, true };
 }
 
 void SelectionGUI::render(RenderWindow& window) {

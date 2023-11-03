@@ -27,7 +27,7 @@ int main(int argc, char* args[]) {
 
 	RenderWindow window("Shaktris", 480 * 2, 272 * 2);
 
-	gameManager game_manager;
+	gameManager game_manager(window);
 
 	Shakkar::AudioManager manager;
 
