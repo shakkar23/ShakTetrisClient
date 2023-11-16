@@ -297,7 +297,7 @@ public:
     Game();
     ~Game();
 
-    void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput);
+    void gameLogic(const Shakkar::inputs& input);
     void render(RenderWindow& window);
 
     void Init(RenderWindow& window) {
@@ -599,13 +599,22 @@ Game::Game()
 
 }
 
-void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
+void Game::gameLogic(const Shakkar::inputs& input) {
+    Shakkar::Key k_left = input.getKey(SDL_KeyCode::SDLK_a);
+    Shakkar::Key k_right = input.getKey(SDLK_d);
+    Shakkar::Key k_rotLeft = input.getKey(SDLK_LEFT);
+    Shakkar::Key k_rotRight = input.getKey(SDLK_RIGHT);
+    Shakkar::Key k_rot180 = input.getKey(SDLK_DOWN);
+    Shakkar::Key k_hardDrop = input.getKey(SDLK_w);
+    Shakkar::Key k_softDrop = input.getKey(SDLK_s);
+    Shakkar::Key k_sonicDrop = input.getKey(SDLK_x);
+    Shakkar::Key k_hold = input.getKey(SDLK_UP);
 
-    if (justPressed(prevInput.left, input.left)) {
+    if (k_left.pressed) {
         leftPressedMostRecent = true;
         rightPressedMostRecent = false;
     }
-    else if (justPressed(prevInput.right, input.right)) {
+    else if (k_right.pressed) {
         rightPressedMostRecent = true;
         leftPressedMostRecent = false;
     }
@@ -613,8 +622,9 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
     bool leftState{};
     bool rightState{};
 
-    leftState = (rightPressedMostRecent && input.right) ? false : input.left;
-    rightState = (leftPressedMostRecent && input.left) ? false : input.right;
+    // fucking magic
+    leftState = (rightPressedMostRecent && (k_left.pressed || k_right.held)) ? false : (k_left.pressed || k_left.held);
+    rightState = (leftPressedMostRecent && (k_left.pressed || k_left.held)) ? false : (k_right.pressed || k_right.held);
 
     if (checkForLineClear) {
         int linesCleared = board.clearLines();
@@ -666,11 +676,11 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
 
         if (leftState)
         {
-            tryMovePiece(MoveDirection::Left, !prevInput.left);
+            tryMovePiece(MoveDirection::Left, !(k_left.held || k_left.released));
         }
         else if (rightState)
         {
-            tryMovePiece(MoveDirection::Right, !prevInput.right);
+            tryMovePiece(MoveDirection::Right, !(k_right.held || k_right.released));
         }
 
         {
@@ -697,29 +707,29 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
             }
             else {
 
-                if (input.softDrop)
+                if (k_softDrop.pressed || k_softDrop.held)
                     softdropCountdown -= 40;
                 else
                     softdropCountdown -= 1;
             }
             // rotate right logic
-            if (justPressed(prevInput.rotLeft, input.rotLeft))
+            if (k_rotLeft.pressed)
                 tryRotate(currentPiece, TurnDirection::Left);
 
             //rotate left logic
-            else if (justPressed(prevInput.rotRight, input.rotRight))
+            else if (k_rotRight.pressed)
                 tryRotate(currentPiece, TurnDirection::Right);
 
             // 180 logic
-            else if (justPressed(prevInput.rot180, input.rot180))
+            else if (k_rot180.pressed)
                 tryRotate(currentPiece, TurnDirection::oneEighty);
 
             //sonic drop logic
-            if (prevInput.sonicDrop)
+            if (k_sonicDrop.pressed || k_sonicDrop.held)
                 board.sonicDrop(currentPiece);
 
             // hold logic
-            if (justPressed(prevInput.hold, input.hold))
+            if (k_hold.pressed)
             {
                 if (!alreadyHeld) {
                     std::swap(currentPiece, hold);
@@ -772,13 +782,14 @@ void Game::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitm
                             isDie = true;
                         }
                     }
-
-                    this->gameLogic(input, input);
+                    auto temp = input;
+                    temp.update();
+                    this->gameLogic(temp);
                 }
             }
 
             //harddrop logic
-            if (justPressed(prevInput.hardDrop, input.hardDrop))
+            if (k_hardDrop.pressed)
             {
                 board.sonicDrop(currentPiece);
                 board.setPiece(currentPiece);

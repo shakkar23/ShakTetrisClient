@@ -17,9 +17,10 @@ SelectionGUI::~SelectionGUI() {}
 //grabs a plugin from the entries that are registered
 void SelectionGUI::init(RenderWindow& window) {
 	this->plugin = Shakkar::Plugins::getEntries().at(0);
+	plugin->Init(window);
 }
 
-GUI_payload SelectionGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+GUI_payload SelectionGUI::update(const Shakkar::inputs& input) {
 	// in this scenario the top option is 0, and you increment to go down
 
 	if (this->plugin == nullptr) {
@@ -28,15 +29,11 @@ GUI_payload SelectionGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitm
 	else if (!plugin->isPlaying) {
 		return { nullptr, false };
 	}
-	else { plugin->gameLogic(input, prevInput); }
+	else { plugin->gameLogic(input); }
 	return { nullptr, true };
 }
 
 void SelectionGUI::render(RenderWindow& window) {
-	if (pluginReInit) {
-		plugin->Init(window);
-		pluginReInit = false;
-	}
 	plugin->render(window);
 
 }

@@ -14,7 +14,7 @@ namespace Shakkar {
     class Tetris {
     public:
         explicit Tetris(){}
-        virtual void gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) = 0;
+        virtual void gameLogic(const Shakkar::inputs& input) = 0;
         virtual void updateSettings(uint32_t das, uint32_t arr) = 0;
         virtual void render(RenderWindow& window) = 0;
         //this needs to reload the game when called after the first time called

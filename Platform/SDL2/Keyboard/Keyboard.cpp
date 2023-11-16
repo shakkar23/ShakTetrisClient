@@ -4,10 +4,10 @@
 
 #include"Keyboard.hpp"
 
-
+/*
 namespace Shakkar {
     namespace Keyboard {
-        void pressKey(const SDL_Scancode scan, Shakkar::inputBitmap &input) {
+        void pressKey(const SDL_Scancode scan, Shakkar::inputs &input) {
             if (scan == SDL_Scancode::SDL_SCANCODE_A)
             {
                 input.setLeft();
@@ -84,7 +84,7 @@ namespace Shakkar {
                  input.setMenuExit();
              }
         }
-        void unpressKey( const SDL_Scancode scan, Shakkar::inputBitmap &input) {
+        void unpressKey( const SDL_Scancode scan, Shakkar::inputs &input) {
             if (scan == SDL_Scancode::SDL_SCANCODE_A)
             {
                 input.unsetLeft();
@@ -164,3 +164,4 @@ namespace Shakkar {
         }
     }
 }
+*/

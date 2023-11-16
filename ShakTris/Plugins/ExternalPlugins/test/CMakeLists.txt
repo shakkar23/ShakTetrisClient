@@ -1,8 +1,7 @@
 project("exmaple")
 
 set(PLUGIN_SOURCES
-	"${CMAKE_CURRENT_LIST_DIR}/example.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/ppt.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/test.cpp"
 	"${SRC}/ShakTris/Input/Input.cpp"
 	"${SRC}/Platform/SDL2/RenderWindow.cpp"
 	"${SRC}/Platform/SDL2/entity.cpp"
@@ -25,6 +24,7 @@ set(PLUGIN_INCLUDE_DIRS
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Settings/Settings.hpp"
 	"${SRC}/Platform/SDL2/gameManager/gameManager.hpp"
 )
+
 add_compile_definitions(PLUGIN_NAME=${plugin})
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")

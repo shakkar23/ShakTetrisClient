@@ -28,12 +28,12 @@ void demo::Init(RenderWindow& window) {
 }
 
 //override
-void demo::gameLogic(const Shakkar::inputBitmap& input, const Shakkar::inputBitmap& prevInput) {
-    
-    if ((!prevInput.menuSelect) && (input.menuSelect))
+void demo::gameLogic(const Shakkar::inputs& input) {
+    Shakkar::Key menuSelect = input.getKey(SDLK_RETURN);
+    if (menuSelect.pressed)
         isPlaying = false;
 
-    game.gameLogic(input, prevInput);
+    game.gameLogic(input);
 }
 
 //override

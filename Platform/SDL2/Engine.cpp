@@ -4,6 +4,8 @@
 #include <SDL_image.h>
 
 #include <vector>
+
+#include "Engine.hpp"
 #include "headers/entity.hpp"
 #include "headers/RenderWindow.hpp"
 #include "Keyboard/Keyboard.hpp"
@@ -11,19 +13,36 @@
 #include "Menus/Menus.hpp"
 #include "Audio/AudioManager.hpp"
 
-int main(int argc, char* args[]) {
-	if (SDL_Init(SDL_INIT_AUDIO) != 0)
-		std::cout << "HEY.. Audio_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
-		<< std::endl;
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
-		std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
-		<< std::endl;
-	if (TTF_Init() != 0)
-		std::cout << "HEY.. ttf_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
-		<< std::endl;
 
-	if (!(IMG_Init(IMG_INIT_PNG)))
-		std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
+class SDL_init {
+public:
+	SDL_init() {
+
+		if (SDL_Init(SDL_INIT_AUDIO) < 0)
+			std::cerr << "HEY.. Audio_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
+			<< std::endl;
+
+		if (SDL_Init(SDL_INIT_VIDEO) < 0)
+			std::cerr << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
+			<< std::endl;
+
+		if (TTF_Init() == -1)
+			std::cerr << "HEY.. ttf_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
+			<< std::endl;
+
+		if (IMG_Init(IMG_INIT_PNG) == 0)
+			std::cerr << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
+	}
+	~SDL_init() {
+		IMG_Quit();
+		TTF_Quit();
+		SDL_Quit();
+	}
+};
+
+
+int main(int argc, char* args[]) {
+	SDL_init sdl;
 
 	RenderWindow window("Shaktris", 480 * 2, 272 * 2);
 
@@ -31,8 +50,7 @@ int main(int argc, char* args[]) {
 
 	Shakkar::AudioManager manager;
 
-	Shakkar::inputBitmap input = Shakkar::inputBitmap();
-	Shakkar::inputBitmap prevInput = Shakkar::inputBitmap();
+	Shakkar::inputs input;
 
 	bool gameRunning = true;
 	SDL_Event event;
@@ -46,6 +64,7 @@ int main(int argc, char* args[]) {
 	Uint64 ticks = 0;
 
 	while (gameRunning) {
+		
 
 		while (SDL_PollEvent(&event)) {
 
@@ -64,11 +83,11 @@ int main(int argc, char* args[]) {
 				if (event.key.state == SDL_PRESSED) {
 					if (event.key.repeat)
 						continue;
-					Shakkar::Keyboard::pressKey(event.key.keysym.scancode, input);
+					input.addKey(event.key.keysym.sym);
 					//std::cout << "Physical" << SDL_GetScancodeName(event.key.keysym.scancode) << " key acting as the " << SDL_GetKeyName(event.key.keysym.sym) << " key" << std::endl;
 				}
 				else {
-					Shakkar::Keyboard::unpressKey(event.key.keysym.scancode, input);
+					input.removeKey(event.key.keysym.sym);
 				}
 			}
 			else if (event.type == SDL_QUIT)
@@ -84,11 +103,11 @@ int main(int argc, char* args[]) {
 			last_time = now;
 
 			while (alpha > 1.0) {
-				if (!game_manager.update(input, prevInput)) {
+				if (!game_manager.update(input)) {
 					gameRunning = false;
 					break;
 				}
-				prevInput = input;
+				input.update();
 
 				alpha -= 1.0;
 			}
@@ -103,8 +122,5 @@ int main(int argc, char* args[]) {
 		}
 	}
 
-	window.cleanUp();
-	SDL_Quit();
-	TTF_Quit();
 	return 0;
 }

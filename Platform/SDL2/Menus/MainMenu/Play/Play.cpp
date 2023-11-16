@@ -47,24 +47,30 @@ void PlayMenuGUI::init(RenderWindow& window) {
 }
 
 
-GUI_payload PlayMenuGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+GUI_payload PlayMenuGUI::update(const Shakkar::inputs& input) {
 	
+	Shakkar::Key menuDown = input.getKey(SDLK_DOWN);
+	Shakkar::Key menuUp = input.getKey(SDLK_UP);
+	Shakkar::Key menuSelect = input.getKey(SDLK_RETURN);
+	Shakkar::Key menuExit = input.getKey(SDLK_ESCAPE);
+
 	if (this->plugin == nullptr) {
-		if (justPressed(prevInput.menuDown, input.menuDown)) {
+		if (menuDown.pressed) {
 			selectedGame = (selectedGame + 1) % Shakkar::Plugins::getEntries().size();
 		}
-		if (justPressed(prevInput.menuUp , input.menuUp)) { //prevent menu underflow
+		if (menuUp.pressed) { //prevent menu underflow
 			if (selectedGame == -1) {
 				selectedGame = Shakkar::Plugins::getEntries().size() - 1;
 			}
 			selectedGame = (selectedGame - 1) % Shakkar::Plugins::getEntries().size();
 		}
-		if (justPressed(prevInput.menuSelect ,input.menuSelect)) {
+		
+		if (menuSelect.pressed) {
 			plugin = Shakkar::Plugins::getEntries()[selectedGame];
 			plugin->updateSettings(das, arr);
 			pluginReInit = true;
 		}
-		if (justPressed(prevInput.menuExit, input.menuExit)) {
+		if (menuExit.pressed) {
 			return { nullptr, false };
 		}
 	}
@@ -74,7 +80,7 @@ GUI_payload PlayMenuGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitma
 		plugin = nullptr; 
 	}
 	else {
-		plugin->gameLogic(input, prevInput);
+		plugin->gameLogic(input);
 	}
 	return { nullptr, true };
 }

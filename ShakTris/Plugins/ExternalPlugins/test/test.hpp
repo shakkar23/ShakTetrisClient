@@ -1,7 +1,6 @@
 #pragma once
 #include "../../PluginHeaders/Tetris.hpp"
 #include "../../PluginHeaders/PluginRegistry.hpp"
-#include "Tetris.hpp"
 
 class demo : public Shakkar::Tetris {
 public:
@@ -12,9 +11,9 @@ public:
     void render(RenderWindow& window) override;
     void Init(RenderWindow& window) override;
     void updateSettings(uint32_t das, uint32_t arr) override;
-    
-private:
-    Game game;
 
+private:
     bool alreadyInitialized = false;
+    int dx{ 1 }, dy{ 1 };
+    int x{ 0 }, y{0};
 };

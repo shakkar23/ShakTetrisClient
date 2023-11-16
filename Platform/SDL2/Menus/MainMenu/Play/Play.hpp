@@ -22,7 +22,7 @@ public:
 	TTF_Font* font{};
 	Shakkar::Tetris* plugin;
 	void init(RenderWindow& window) override;
-	GUI_payload update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) override;
+	GUI_payload update(const Shakkar::inputs& input) override;
 	void render(RenderWindow& window) override;
 	Sprite backGround;
 	int selectedGame = 0;

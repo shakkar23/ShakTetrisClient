@@ -1,21 +1,24 @@
 #include "gameManager.hpp"
 
-bool gameManager::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+bool gameManager::update(const Shakkar::inputs& input) {
     // get last element
-    auto last = subGUIs.back();
+    if (subGUIs.size() == 0)
+		return false;
+    GUI* last = subGUIs.back();
 
-    GUI_payload payload = last->update(input, prevInput);
+    GUI_payload payload = last->update(input);
 
     if (!payload.second)
     {
         auto iter = std::find(subGUIs.begin(), subGUIs.end(), payload.first);
+        // if we dont find it, then we are deleting the last menu
 
-        if (iter != subGUIs.end())
+        if (iter == subGUIs.end())
         {
-			subGUIs.erase(iter);
-			delete payload.first;
-			payload.first = nullptr;
+			subGUIs.pop_back();
+			delete last;
 		}
+
     }
     else if (payload.first != nullptr)
     {

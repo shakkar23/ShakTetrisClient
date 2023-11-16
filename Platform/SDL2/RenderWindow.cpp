@@ -19,7 +19,7 @@ RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
 
   renderer = SDL_CreateRenderer(
       this->window, -1, SDL_RENDERER_ACCELERATED | SDL_RendererFlags::SDL_RENDERER_PRESENTVSYNC);
-  SDL_RenderSetLogicalSize(this->renderer, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT); 
+  //SDL_RenderSetLogicalSize(this->renderer, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT); 
 
 
 
@@ -55,6 +55,8 @@ RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
   SDL_FreeSurface(surface);
 }
 
+RenderWindow::~RenderWindow() { SDL_DestroyWindow(this->window); }
+
 int RenderWindow::getRefreshrate() {
   int displayIndex = SDL_GetWindowDisplayIndex(this->window);
   SDL_DisplayMode mode;
@@ -62,10 +64,13 @@ int RenderWindow::getRefreshrate() {
   return mode.refresh_rate;
 }
 
+void RenderWindow::getWindowSize(int& x, int& y) {
+    SDL_GetWindowSize(this->window, &x, &y);
+}
 
-void RenderWindow::cleanUp() { SDL_DestroyWindow(this->window); }
-
-void RenderWindow::clear() { SDL_RenderClear(this->renderer); }
+void RenderWindow::setWindowSize(int x, int y) {
+    SDL_SetWindowSize(this->window, x, y);
+}
 
 // passing in a src with all zeros will grab the entire texture
 // returns weather it worked or not
@@ -87,14 +92,56 @@ void RenderWindow::renderCopy(SDL_Texture* texture, const SDL_Rect* srcrect, con
     SDL_RenderCopy(renderer, texture, srcrect, dstrect);
 }
 
-void RenderWindow::display() { SDL_RenderPresent(this->renderer); }
 
-void RenderWindow::getWindowSize(int& x, int& y) {
-    SDL_GetWindowSize(this->window, &x, &y);
+SDL_Renderer* RenderWindow::getRenderer() {
+    return renderer;
 }
 
-void RenderWindow::setWindowSize(int x, int y) {
-    SDL_SetWindowSize(this->window, x, y);
+void RenderWindow::display() { SDL_RenderPresent(this->renderer); }
+
+void RenderWindow::clear() { SDL_RenderClear(this->renderer); }
+
+void RenderWindow::drawCircle(int X, int Y, int r) {
+    const int32_t diameter = (r * 2);
+
+    int32_t x = (r - 1);
+    int32_t y = 0;
+    int32_t tx = 1;
+    int32_t ty = 1;
+    int32_t error = (tx - diameter);
+
+    while (x >= y)
+    {
+        //  Each of the following renders an octant of the circle
+        SDL_RenderDrawPoint(renderer, X + x, Y - y);
+        SDL_RenderDrawPoint(renderer, X + x, Y + y);
+        SDL_RenderDrawPoint(renderer, X - x, Y - y);
+        SDL_RenderDrawPoint(renderer, X - x, Y + y);
+        SDL_RenderDrawPoint(renderer, X + y, Y - x);
+        SDL_RenderDrawPoint(renderer, X + y, Y + x);
+        SDL_RenderDrawPoint(renderer, X - y, Y - x);
+        SDL_RenderDrawPoint(renderer, X - y, Y + x);
+
+        if (error <= 0)
+        {
+            ++y;
+            error += ty;
+            ty += 2;
+        }
+
+        if (error > 0)
+        {
+            --x;
+            tx += 2;
+            error += (tx - diameter);
+        }
+    }
+}
+
+
+void RenderWindow::drawRect(SDL_Rect rec)
+{
+    SDL_RenderDrawRect(renderer, &rec);
 }
 
 SDL_Texture* RenderWindow::CreateTextureFromSurface(SDL_Surface* surface) {
@@ -102,6 +149,12 @@ SDL_Texture* RenderWindow::CreateTextureFromSurface(SDL_Surface* surface) {
 }
 
 
-SDL_Renderer* RenderWindow::getRenderer() {
-    return renderer;
+void RenderWindow::setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+}
+
+void RenderWindow::getDrawColor(Uint8& r, Uint8& g, Uint8& b, Uint8& a)
+{
+    SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
 }

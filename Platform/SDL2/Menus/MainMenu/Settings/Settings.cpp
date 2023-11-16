@@ -27,19 +27,22 @@ void settingsMenuGUI::init(RenderWindow& window) {
 	return;
 }
 
-GUI_payload settingsMenuGUI::update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput) {
+GUI_payload settingsMenuGUI::update(const Shakkar::inputs& input) {
 	// in this scenario the top option is 0, and you increment to go down
+	Shakkar::Key menuDown = input.getKey(SDLK_DOWN);
+	Shakkar::Key menuUp = input.getKey(SDLK_UP);
+	Shakkar::Key menuSelect = input.getKey(SDLK_RETURN);
 
-	if (input.menuDown && !prevInput.menuDown) {
+	if (menuDown.pressed) {
 		highlighted = (highlighted + 1) % numberOfOptions;
 	}
-	if (input.menuUp && !prevInput.menuUp) { //prevent menu underflow
+	if (menuUp.pressed) { //prevent menu underflow
 		if (highlighted == 0) {
 			highlighted = numberOfOptions;
 		}
 		highlighted = (highlighted - 1) % numberOfOptions;
 	}
-	if (input.menuSelect && !prevInput.menuSelect) {
+	if (menuSelect.pressed) {
 		switch ((GameState)highlighted)
 		{
 		case settingsMenuGUI::Play:

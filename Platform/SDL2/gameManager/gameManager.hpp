@@ -15,7 +15,7 @@ class gameManager
 {
 public:
 	// void Init(RenderWindow& window) override;
-	bool update(Shakkar::inputBitmap& input, Shakkar::inputBitmap& prevInput);
+	bool update(const Shakkar::inputs& input);
 	void render(RenderWindow &window);
 
 	gameManager(RenderWindow& window) { 

@@ -18,12 +18,8 @@ if(NOT EXECUTABLE_TYPE)
 endif()
 
 set(SRC "${CMAKE_SOURCE_DIR}")
-set(CMAKE_CXX_STANDARD 20)
 
 set(PLUGINS_INSTALL_LOCATION "plugins")
-set(PLUGINS
-	example
-)
 
 set(GAME_SOURCES
 	"${SRC}/ShakTris/Input/Input.cpp"

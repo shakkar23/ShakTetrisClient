@@ -1,64 +1,32 @@
 #pragma once
 #ifndef SHAK_INPUT
 #define SHAK_INPUT
+#include <vector>
+#include <SDL2/SDL.h>
 
 namespace Shakkar {
+    // taken inspiration from the PixelGameEngine HWButton struct by javidx9
+    // https://github.com/OneLoneCoder/olcPixelGameEngine
+    struct Key
+    {
+        bool pressed;
+        bool held;
+        bool released;
+    };
 
-    class inputBitmap
+    class inputs
     {
     public:
-        bool left       : 1;
-        bool right      : 1;
-        bool rotRight   : 1;
-        bool rotLeft    : 1;
-        bool rot180     : 1;
-        bool hold       : 1;
-        bool hardDrop   : 1;
-        bool softDrop   : 1;
-        bool sonicDrop  : 1;
-        bool menuUp     : 1;
-        bool menuDown   : 1;
-        bool menuLeft   : 1;
-        bool menuRight  : 1;
-        bool menuSelect : 1;
-        bool menuExit   : 1;
-
-        inputBitmap();
-
-        void setLeft();
-        void setRight();
-        void setRotRight();
-        void setRotLeft();
-        void setRot180();
-        void setHold();
-        void setHardDrop();
-        void setSoftDrop();
-        void setSonicDrop();
-        void setMenuUp();
-        void setMenuDown();
-        void setMenuLeft();
-        void setMenuRight();
-        void setMenuSelect();
-        void setMenuExit();
-
-        void unsetLeft();
-        void unsetRight();
-        void unsetRotRight();
-        void unsetRotLeft();
-        void unsetRot180();
-        void unsetHold();
-        void unsetHardDrop();
-        void unsetSoftDrop();
-        void unsetSonicDrop();
-        void unsetMenuUp();
-        void unsetMenuDown();
-        void unsetMenuLeft();
-        void unsetMenuRight();
-        void unsetMenuSelect();
-        void unsetMenuExit();
-        
+        inputs();
+        void addKey(SDL_Keycode key);
+        void removeKey(SDL_Keycode key);
+        Key getKey(SDL_Keycode key) const;
+        void update();
     private:
+        std::vector<SDL_Keycode> cur_buttons;
+        std::vector<SDL_Keycode> prev_buttons;
     };
 };
+// returns true if the input was just pressed
 constexpr bool justPressed(bool prevInput, bool input) { return (!prevInput && input); }
 #endif
