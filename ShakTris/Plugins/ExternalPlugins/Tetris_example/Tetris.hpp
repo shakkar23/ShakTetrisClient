@@ -3,7 +3,7 @@
 #include "PieceDefs.hpp"
 #include "../../../../Platform/SDL2/headers/RenderWindow.hpp"
 #include "../../../../Platform/SDL2/headers/Engine.hpp"
-#include "../../../../Platform/SDL2/headers/entity.hpp"
+#include "../../../../Platform/SDL2/headers/TextureManager.hpp"
 #include "../../../../Platform/SDL2/Audio/Audio.hpp"
 #include "combo_table.hpp"
 #include "damageTable.hpp"
@@ -210,7 +210,7 @@ public:
     }
 
     void setPiece(const Piece& piece) {
-        Shakkar::playAudio("Asset/Sounds/Sound.wav", (128 / 5));
+        //Shakkar::playAudio("Asset/Sounds/Sound.wav", (128 / 5));
 
         for (auto& coord : piece.piecedef)
         {
@@ -623,7 +623,7 @@ void Game::gameLogic(const Shakkar::inputs& input) {
     bool rightState{};
 
     // fucking magic
-    leftState = (rightPressedMostRecent && (k_left.pressed || k_right.held)) ? false : (k_left.pressed || k_left.held);
+    leftState = (rightPressedMostRecent && (k_right.pressed || k_right.held)) ? false : (k_left.pressed || k_left.held);
     rightState = (leftPressedMostRecent && (k_left.pressed || k_left.held)) ? false : (k_right.pressed || k_right.held);
 
     if (checkForLineClear) {
@@ -782,7 +782,7 @@ void Game::gameLogic(const Shakkar::inputs& input) {
                             isDie = true;
                         }
                     }
-                    auto temp = input;
+                    Shakkar::inputs temp = input;
                     temp.update();
                     this->gameLogic(temp);
                 }

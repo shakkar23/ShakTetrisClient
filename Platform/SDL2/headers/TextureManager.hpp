@@ -1,7 +1,4 @@
 #pragma once
-//not my code, but modified by me
-#ifndef SHAK_ENTITY
-#define SHAK_ENTITY
 
 #include <map>
 #include <string>
@@ -59,8 +56,8 @@ public:
 
 	SDL_Texture* texture;
 	std::string path;
-	uint8_t width;
-	uint8_t height;
+	uint16_t width;
+	uint16_t height;
 };
 
 class Sprite : public Renderable {
@@ -70,7 +67,7 @@ public:
 
 		// set class members
 		this->texture = tex;
-		this->srcRect = { 0, 0, 0, 0 };
+		this->srcRect = { 0, 0, tex->width, tex->height };
 		this->destRect = { 0, 0, 0, 0 };
 	}
 
@@ -264,5 +261,3 @@ private:
 	static Texture* loadTexture(RenderWindow& window, std::string_view p_filePath);
 	static inline std::map<std::string, Texture*> textures;
 };
-
-#endif

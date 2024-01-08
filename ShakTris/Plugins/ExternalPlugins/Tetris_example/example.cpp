@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+
 demo::demo() : Shakkar::Tetris() {
     
     isPlaying = true;
@@ -44,7 +45,7 @@ void demo::render(RenderWindow& window)  {
 
 
 ////         name of plugin     author           description?
-PLUGIN_SETUP("example",         "Shakkar23",    "example plugin lets GOOOO") {
+PLUGIN_SETUP("Tetris_exmaple",  "Shakkar23",     "example plugin lets GOOOO") {
     Shakkar::Plugins::addorig<demo>();
     Shakkar::Plugins::getEntries().back()->Init((*(RenderWindow*)window));
 }

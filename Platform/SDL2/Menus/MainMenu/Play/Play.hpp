@@ -1,21 +1,18 @@
 #pragma once
-#ifndef SHAK_PLAY
-#define SHAK_PLAY
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Platform/SDL2/headers/entity.hpp"
-#include "Platform/SDL2/Menus/Menus.hpp"
-#include "Platform/SDL2/Menus/MainMenu/MainMenu.hpp"
-#include "ShakTris/Input/Input.hpp"
-#include "Platform/SDL2/headers/Engine.hpp"
-#include "ShakTris/Plugins/PluginHeaders/Tetris.hpp"
-#include "ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
+#include "../../../../../ShakTris/Plugins/PluginHeaders/PluginRegistry.hpp"
+#include "../../../../../ShakTris/Plugins/PluginHeaders/Tetris.hpp"
+#include "../../../../../ShakTris/Input/Input.hpp"
+#include "../../../headers/TextureManager.hpp"
+#include "../../../headers/Engine.hpp"
+#include "../../Menus.hpp"
+#include "../MainMenu.hpp"
 
 
 class PlayMenuGUI : public GUI {
-
-
 public:
 	PlayMenuGUI();
 	~PlayMenuGUI();
@@ -34,4 +31,3 @@ public:
 	int das = 0;
 	int arr = 0;
 };
-#endif

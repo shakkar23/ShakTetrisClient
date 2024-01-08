@@ -3,8 +3,7 @@ set(PLATFORM_SOURCES
 	${GAME_SOURCES}
 	"${SRC}/Platform/SDL2/Engine.cpp"
 	"${SRC}/Platform/SDL2/RenderWindow.cpp"
-	"${SRC}/Platform/SDL2/entity.cpp"
-	"${SRC}/Platform/SDL2/Keyboard/Keyboard.cpp"
+	"${SRC}/Platform/SDL2/TextureManager.cpp"
 	"${SRC}/Platform/SDL2/Menus/Menus.cpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/MainMenu.cpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Play/Play.cpp"
@@ -16,8 +15,7 @@ set(PLATFORM_SOURCES
 set(PLATFORM_HEADERS 
 	"${SRC}/Platform/SDL2/headers/Engine.hpp"
 	"${SRC}/Platform/SDL2/headers/RenderWindow.hpp"
-	"${SRC}/Platform/SDL2/headers/entity.hpp"
-	"${SRC}/Platform/SDL2/Keyboard/Keyboard.hpp"
+	"${SRC}/Platform/SDL2/headers/TextureManager.hpp"
 	"${SRC}/Platform/SDL2/Menus/Menus.hpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/MainMenu.hpp"
 	"${SRC}/Platform/SDL2/Menus/MainMenu/Play/Play.hpp"
@@ -67,9 +65,13 @@ if (WIN32)
 
 endif()
 
+
 add_library(Registry SHARED ${REGISTRY_SOURCES})
 target_include_directories(Registry PUBLIC ${REGISTRY_INCLUDE})
-target_link_libraries(Registry PUBLIC SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
+target_link_libraries(Registry 
+	PUBLIC SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf 
+	PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
+)
 set_target_properties( 
 		Registry
     PROPERTIES

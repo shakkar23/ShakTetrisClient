@@ -1,16 +1,14 @@
 #pragma once
-#ifndef SHAK_MAIN_MENU
-#define SHAK_MAIN_MENU
 
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Platform/SDL2/Menus/MainMenu/Settings/Settings.hpp"
-#include"Platform/SDL2/Menus/MainMenu/Play/Play.hpp"
-#include "Platform/SDL2/Menus/Menus.hpp"
-#include "ShakTris/Input/Input.hpp"
-#include "Platform/SDL2/headers/entity.hpp"
+#include "Settings/Settings.hpp"
+#include "Play/Play.hpp"
+#include "../Menus.hpp"
+#include "../../../../ShakTris/Input/Input.hpp"
+#include "../headers/TextureManager.hpp"
 
 class menuGUI;
 
@@ -41,5 +39,3 @@ private:
 	std::vector<SurfaceTexture*> texs;
 };
 
-
-#endif

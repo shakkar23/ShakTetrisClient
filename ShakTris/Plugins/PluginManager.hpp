@@ -1,14 +1,11 @@
 #pragma once
-#ifndef PLUGIN_MANAGER
-#define PLUGIN_MANAGER
+
 #include <string>
 #include <string_view>
 #include <filesystem>
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "../../Platform/SDL2/headers/RenderWindow.hpp"
-#include "PluginHeaders/PluginRegistry.hpp"
 
 #if defined(_WINDOWS)
 #include <windows.h>
@@ -19,6 +16,9 @@
 #elif defined(OS_LINUX)
 #include <xdg.hpp>
 #endif
+
+#include "../../Platform/SDL2/headers/RenderWindow.hpp"
+#include "PluginHeaders/PluginRegistry.hpp"
 
 class Plugin {
 public:
@@ -83,4 +83,3 @@ private:
 bool unloadPlugins();
 std::vector<std::string> getPath();
 
-#endif

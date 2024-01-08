@@ -1,31 +1,19 @@
 #pragma once
 
-#ifndef SHAK_GAME_MANAGER
-#define SHAK_GAME_MANAGER
+#include "../../ShakTris/Plugins/PluginManager.hpp"
+#include "../Menus/MainMenu/MainMenu.hpp" 
+#include "../headers/RenderWindow.hpp"
+#include "../Menus/Menus.hpp"
 
-#include "Platform/SDL2/Menus/Menus.hpp" 
-#include "Platform/SDL2/Menus/MainMenu/MainMenu.hpp" 
-#include "Platform/SDL2/headers/RenderWindow.hpp"
-#include "ShakTris/Plugins/PluginManager.hpp"
-#include <thread>
-
-
-// this is the gameManager, it redirects the thread to wherever it needs to go
+// this is the gameManager, it redirects to wherever it needs to go
 class gameManager
 {
 public:
-	// void Init(RenderWindow& window) override;
 	bool update(const Shakkar::inputs& input);
 	void render(RenderWindow &window);
 
-	gameManager(RenderWindow& window) { 
-		PluginManager::loadPlugins(window);
-		subGUIs.push_back(new mainMenuGUI());
-	}
-	~gameManager()
-	{
-		unloadPlugins();
-	}
+	gameManager(RenderWindow& window);
+	~gameManager();
 private:
 	enum class GameState : uint_fast8_t
 	{
@@ -38,4 +26,3 @@ private:
 	std::vector<GUI*> subGUIs;
 };
 
-#endif

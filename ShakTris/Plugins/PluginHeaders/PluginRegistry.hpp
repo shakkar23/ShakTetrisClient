@@ -1,9 +1,12 @@
 #pragma once
+
 #include <vector>
-#include "Tetris.hpp"
-#include "../PluginManager.hpp"
 #include <concepts>
 #include <type_traits>
+
+#include "../PluginManager.hpp"
+#include "Tetris.hpp"
+
 
 #define DLL extern "C" __declspec(dllexport)
 
@@ -19,17 +22,16 @@
     void namespaceName::initializePlugin(void *window)
 
 namespace Shakkar {
-    using std::derived_from;
     //tamplate stuff to make sure they are definitely being derived from my base class
 
     
     struct Plugins {
         Plugins() = delete;
-        template<Shakkar::derived_from<Shakkar::Tetris> T, typename ... Args>
+        template<std::derived_from<Tetris> T, typename ... Args>
         static void addorig(Args&& ... args) {
             return add2(new T(std::forward<Args>(args)...));
         }
-        template<Shakkar::derived_from<Shakkar::Tetris> T>
+        template<std::derived_from<Tetris> T>
             static void addnew() {
             return add2(new T());
         }
@@ -38,10 +40,6 @@ namespace Shakkar {
 
         static void add2(Tetris* game);
 
-
     };
 
-
-
-    
 };

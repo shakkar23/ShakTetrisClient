@@ -1,5 +1,15 @@
 #include "gameManager.hpp"
 
+gameManager::gameManager(RenderWindow& window) {
+    PluginManager::loadPlugins(window);
+    subGUIs.push_back(new mainMenuGUI());
+}
+
+gameManager::~gameManager(){
+    unloadPlugins();
+}
+
+
 bool gameManager::update(const Shakkar::inputs& input) {
     // get last element
     if (subGUIs.size() == 0)

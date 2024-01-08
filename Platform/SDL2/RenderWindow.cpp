@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-#include "headers/entity.hpp"
+#include "headers/TextureManager.hpp"
 #include "headers/RenderWindow.hpp"
 #include "headers/Engine.hpp"
 
@@ -18,7 +18,9 @@ RenderWindow::RenderWindow(const char *p_title, const int p_w, const int p_h)
   }
 
   renderer = SDL_CreateRenderer(
-      this->window, -1, SDL_RENDERER_ACCELERATED | SDL_RendererFlags::SDL_RENDERER_PRESENTVSYNC);
+      this->window, -1, SDL_RENDERER_ACCELERATED 
+  //    | SDL_RendererFlags::SDL_RENDERER_PRESENTVSYNC
+  );
   //SDL_RenderSetLogicalSize(this->renderer, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT); 
 
 
@@ -137,6 +139,7 @@ void RenderWindow::drawCircle(int X, int Y, int r) {
         }
     }
 }
+
 
 
 void RenderWindow::drawRect(SDL_Rect rec)

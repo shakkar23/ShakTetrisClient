@@ -1,11 +1,9 @@
 #pragma once
-#ifndef SHAK_SELECT
-#define SHAK_SELECT
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Platform/SDL2/headers/entity.hpp"
+#include "Platform/SDL2/headers/TextureManager.hpp"
 #include "Platform/SDL2/Menus/Menus.hpp"
 #include "Platform/SDL2/Menus/MainMenu/MainMenu.hpp"
 #include "ShakTris/Input/Input.hpp"
@@ -30,4 +28,3 @@ public:
 private:
 	bool pluginReInit = false;
 };
-#endif

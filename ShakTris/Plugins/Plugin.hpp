@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <string_view>
 #include <filesystem>
@@ -24,7 +26,7 @@
         [[gnu::visibility("default")]] const char* getPluginAuthor() { return author; }                \
         [[gnu::visibility("default")]] const char* getPluginDescription() { return description; }       \
         }                                                                                                \
-    void hex::plugin::namespaceName::internal::initializePlugin()
+    void plugin::namespaceName::internal::initializePlugin()
 
 class PlayMenuGUI;
 class Plugin {

@@ -1,17 +1,7 @@
-﻿#include <iostream>
+﻿#include "Engine.hpp"
 
-#include <SDL.h>
-#include <SDL_image.h>
-
+#include <iostream>
 #include <vector>
-
-#include "Engine.hpp"
-#include "headers/entity.hpp"
-#include "headers/RenderWindow.hpp"
-#include "Keyboard/Keyboard.hpp"
-#include "gameManager/gameManager.hpp"
-#include "Menus/Menus.hpp"
-#include "Audio/AudioManager.hpp"
 
 
 class SDL_init {
@@ -26,6 +16,16 @@ public:
 			std::cerr << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
 			<< std::endl;
 
+		if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+		{
+			std::cerr << "HEY.. Mix_OpenAudio HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
+			std::cerr << "Maybe install SDL2_mixer[mpg123]:arch-OS or just find a way to link mpg123" << std::endl;
+		}
+
+		if(Mix_Init(MIX_INIT_MP3) == 0)
+			std::cerr << "HEY.. Mix_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
+			<< std::endl;
+
 		if (TTF_Init() == -1)
 			std::cerr << "HEY.. ttf_Init HAS FAILED. SDL_ERROR: " << SDL_GetError()
 			<< std::endl;
@@ -36,19 +36,20 @@ public:
 	~SDL_init() {
 		IMG_Quit();
 		TTF_Quit();
+		Mix_CloseAudio();
+		Mix_Quit();
 		SDL_Quit();
 	}
 };
 
+void ProcessInputs(SDL_Event& event, bool& shouldDisplay, bool& windowSizedChanged, Shakkar::inputs& input, bool& gameRunning);
 
 int main(int argc, char* args[]) {
 	SDL_init sdl;
 
-	RenderWindow window("Shaktris", 480 * 2, 272 * 2);
+	RenderWindow window("Shaktris", 960, 960);
 
 	gameManager game_manager(window);
-
-	Shakkar::AudioManager manager;
 
 	Shakkar::inputs input;
 
@@ -66,34 +67,7 @@ int main(int argc, char* args[]) {
 	while (gameRunning) {
 		
 
-		while (SDL_PollEvent(&event)) {
-
-			if (event.type == SDL_WINDOWEVENT) {
-				if (event.window.event == SDL_WINDOWEVENT_MINIMIZED) {
-					shouldDisplay = false;
-				}
-				else if (event.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
-					shouldDisplay = false;
-				}
-				else if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-					windowSizedChanged = true;
-				}
-			}
-			else if ((event.key.type == SDL_KEYDOWN) || (event.key.type == SDL_KEYUP)) {
-				if (event.key.state == SDL_PRESSED) {
-					if (event.key.repeat)
-						continue;
-					input.addKey(event.key.keysym.sym);
-					//std::cout << "Physical" << SDL_GetScancodeName(event.key.keysym.scancode) << " key acting as the " << SDL_GetKeyName(event.key.keysym.sym) << " key" << std::endl;
-				}
-				else {
-					input.removeKey(event.key.keysym.sym);
-				}
-			}
-			else if (event.type == SDL_QUIT)
-				gameRunning = false;
-
-		}
+		ProcessInputs(event, shouldDisplay, windowSizedChanged, input, gameRunning);
 
 		// skip frames that cant be shown due to window not currently accepting frames to display
 		if (!shouldDisplay) {
@@ -117,10 +91,53 @@ int main(int argc, char* args[]) {
 			else {
 				gameRunning = false;
 			}
-
-
 		}
 	}
 
 	return 0;
+}
+
+void ProcessInputs(SDL_Event& event, bool& shouldDisplay, bool& windowSizedChanged, Shakkar::inputs& input, bool& gameRunning)
+{
+	while (SDL_PollEvent(&event)) {
+
+		if (event.type == SDL_WINDOWEVENT) {
+			if (event.window.event == SDL_WINDOWEVENT_MINIMIZED) {
+				shouldDisplay = false;
+			}
+			else if (event.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
+				shouldDisplay = false;
+			}
+			else if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+				windowSizedChanged = true;
+			}
+		}
+		else if ((event.key.type == SDL_KEYDOWN) || (event.key.type == SDL_KEYUP)) {
+			if (event.key.state == SDL_PRESSED) {
+				if (event.key.repeat)
+					continue;
+				input.addKey(event.key.keysym.sym);
+				//std::cout << "Physical" << SDL_GetScancodeName(event.key.keysym.scancode) << " key acting as the " << SDL_GetKeyName(event.key.keysym.sym) << " key" << std::endl;
+			}
+			else {
+				input.removeKey(event.key.keysym.sym);
+			}
+		}
+		// mouse events
+		else if (event.type == SDL_MOUSEBUTTONDOWN) {
+			input.updateMouseButtons(event.button.button, true);
+		}
+		else if (event.type == SDL_MOUSEBUTTONUP) {
+			input.updateMouseButtons(event.button.button, false);
+		}
+		else if (event.type == SDL_MOUSEMOTION) {
+			input.updateMousePos(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel);
+		}
+		else if (event.type == SDL_MOUSEWHEEL) {
+			input.updateMouseWheel(event.wheel.x, event.wheel.y, event.wheel.direction);
+		}
+		else if (event.type == SDL_QUIT) // X button on window, or something else that closes the window from the OS
+			gameRunning = false;
+
+	}
 }

@@ -14,7 +14,7 @@ Plugin::Plugin(std::string_view path) {
     this->m_handle = dlopen(path.data(), RTLD_LAZY);
     
     if (this->m_handle == nullptr) {
-        std::cout << ("dlopen failed: {}", dlerror()) << std::endl<;
+        std::cout << ("dlopen failed: {}", dlerror()) << std::endl;
         return;
     }
 

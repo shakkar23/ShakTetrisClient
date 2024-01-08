@@ -1,17 +1,13 @@
 #pragma once
-#ifndef SHAK_SETTINGS
-#define SHAK_SETTINGS
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "Platform/SDL2/headers/entity.hpp"
-#include "Platform/SDL2/Menus/Menus.hpp"
-#include "Platform/SDL2/Menus/MainMenu/MainMenu.hpp"
-#include "ShakTris/Input/Input.hpp"
-#include "Platform/SDL2/headers/Engine.hpp"
-
-
+#include "../../../../../ShakTris/Input/Input.hpp"
+#include "../../../headers/TextureManager.hpp"
+#include "../../../headers/Engine.hpp"
+#include "../../Menus.hpp"
+#include "../MainMenu.hpp"
 
 class settingsMenuGUI : public GUI {
 
@@ -43,5 +39,3 @@ private:
 	};
 
 };
-
-#endif
